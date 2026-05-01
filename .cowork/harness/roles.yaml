@@ -1,0 +1,51 @@
+# Roles — Who can do what in the cowork harness
+# Process permissions for each role (Layer 3 owns this)
+
+roles:
+  human:
+    label: "HIL (Human-in-the-Loop)"
+    authority: owner
+    can:
+      - define_task
+      - approve_stage
+      - reject_stage
+      - override_any_decision
+      - request_agent_review
+      - close_task
+    cannot: []
+
+  orchestrator:
+    label: "Orchestrator (IDE AI)"
+    authority: executor
+    can:
+      - create_task_folder
+      - write_spec
+      - write_review_entry
+      - revise_spec
+      - implement_code
+      - run_tests
+      - produce_evidence
+      - update_state
+      - update_timeline
+    cannot:
+      - skip_stage
+      - approve_stage
+      - close_task
+      - start_coding_before_approval
+      - delete_review_entries
+      - overwrite_human_decisions
+
+  reviewer:
+    label: "Reviewer Agent (external AI)"
+    authority: advisor
+    can:
+      - read_task_definition
+      - read_active_stage_spec
+      - append_review_findings
+      - suggest_improvements
+    cannot:
+      - edit_production_code
+      - advance_stage_state
+      - approve_or_reject_stage
+      - override_human_decisions
+      - rewrite_task_scope

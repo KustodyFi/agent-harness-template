@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Task Evidence Manifest",
+  "type": "object",
+  "required": ["task", "evidence"],
+  "properties": {
+    "task": { "type": "string" },
+    "evidence": {
+      "type": "object",
+      "required": ["tests", "changed_files", "verification"],
+      "properties": {
+        "tests": { "type": "string", "description": "Path to tests.md" },
+        "changed_files": { "type": "string", "description": "Path to changed_files.md" },
+        "verification": { "type": "string", "description": "Path to verification.md" }
+      }
+    }
+  }
+}

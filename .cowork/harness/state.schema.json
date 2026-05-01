@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Task STATE.yaml Schema",
+  "type": "object",
+  "required": ["task", "current_stage", "current_stage_status", "coding_allowed", "stages"],
+  "properties": {
+    "task": { "type": "string" },
+    "task_status": { "type": "string", "enum": ["active", "complete", "verified", "closed"] },
+    "current_stage": { "type": "string", "enum": ["planning", "architecture", "structure", "implementation"] },
+    "current_stage_status": { "type": "string", "enum": ["pending", "in_review", "changes_requested", "approved", "coding", "complete"] },
+    "coding_allowed": { "type": "boolean" },
+    "stages": {
+      "type": "object",
+      "properties": {
+        "planning": { "$ref": "#/definitions/stage" },
+        "architecture": { "$ref": "#/definitions/stage" },
+        "structure": { "$ref": "#/definitions/stage" },
+        "implementation": { "$ref": "#/definitions/stage" }
+      }
+    }
+  },
+  "definitions": {
+    "stage": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": { "type": "string" },
+        "review_rounds": { "type": "integer", "minimum": 0 },
+        "approved_by": { "type": "string" },
+        "approved_date": { "type": "string" }
+      }
+    }
+  },
+  "additionalProperties": false
+}

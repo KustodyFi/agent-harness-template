@@ -1,0 +1,57 @@
+# State Machine — Valid stage transitions
+# Defines the allowed flow through task stages
+
+initial_state: planning
+
+states:
+  planning:
+    statuses: [pending, in_review, changes_requested, approved]
+    transitions:
+      approved: architecture
+    invariants:
+      - coding_allowed must be false
+
+  architecture:
+    statuses: [pending, in_review, changes_requested, approved]
+    requires: [planning.approved]
+    transitions:
+      approved: structure
+    invariants:
+      - coding_allowed must be false
+
+  structure:
+    statuses: [pending, in_review, changes_requested, approved]
+    requires: [planning.approved, architecture.approved]
+    transitions:
+      approved: implementation
+    invariants:
+      - coding_allowed must be false
+
+  implementation:
+    statuses: [pending, in_review, changes_requested, approved, coding, complete]
+    requires: [planning.approved, architecture.approved, structure.approved]
+    transitions:
+      approved: coding
+      coding: complete
+    invariants:
+      - coding_allowed becomes true only when status is coding or complete
+
+terminal_states:
+  - complete
+
+# Task-level transitions
+task_lifecycle:
+  - active          # task is being worked on
+  - complete        # all stages done, evidence written
+  - verified        # human has verified
+  - closed          # published to docs/, task done
+
+# Validation rules
+rules:
+  - only one stage may be active at a time
+  - no stage may be skipped
+  - coding_allowed is false until implementation stage reaches 'coding' status
+  - task cannot close without evidence files
+  - task cannot close without human verification
+  - stage transitions require human approval
+  - review entries are append-only (never delete)
