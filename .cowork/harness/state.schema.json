@@ -8,7 +8,11 @@
     "task": { "type": "string" },
     "task_status": { "type": "string", "enum": ["active", "complete", "verified", "closed"] },
     "current_stage": { "type": "string", "enum": ["planning", "architecture", "structure", "implementation"] },
-    "current_stage_status": { "type": "string", "enum": ["pending", "in_review", "changes_requested", "approved", "coding", "complete"] },
+    "current_stage_status": {
+      "type": "string",
+      "enum": ["pending", "in_review", "changes_requested", "approved", "coding", "complete"],
+      "description": "coding and complete are only valid when current_stage is implementation (enforced by validate_state.py)"
+    },
     "coding_allowed": { "type": "boolean" },
     "stages": {
       "type": "object",

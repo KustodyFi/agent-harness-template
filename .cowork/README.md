@@ -16,15 +16,9 @@
 
 ---
 
-## Deliverables Per Task
+## Task Structure
 
-| Deliverable | File | What's In It |
-|------------|------|-------------|
-| **Specs** | `{stage}/spec.md` | Orchestrator-written deliverable |
-| **Reviews** | `{stage}/review.md` | Full discussion history with attribution |
-| **Results** | `04_implementation/result.md` | What was built, before/after |
-| **Evidence** | `evidence/changed_files.md` | Every file changed + why |
-| **Tests** | `evidence/tests.md` | Raw test output |
+See `.cowork/tasks/README.md` for the canonical task folder structure and deliverables.
 
 ---
 

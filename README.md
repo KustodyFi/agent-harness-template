@@ -9,12 +9,8 @@
 
 ## What This Is
 
-A standardized framework that governs how AI development agents operate in a repository. It enforces:
-
-- **Human-gated workflow** — no code ships without human approval at every stage
-- **Multi-agent collaboration** — orchestrator writes, reviewer verifies, human approves
-- **Structured task execution** — every task follows 4 stages: planning → architecture → structure → implementation
-- **One source of truth** — no duplicated rules, every file has a single canonical home
+A standardized framework that governs how AI development agents operate in a repository.
+See `AGENTS.md` for the full architecture and `agent.md` for operational rules.
 
 ---
 
@@ -114,11 +110,7 @@ See `.cowork/HARNESS_SPEC.md` → "Task Stages" and "Gate Rules" for the canonic
 
 ### Team Roles
 
-| Role | Agent | Can Do | Cannot Do |
-|------|-------|--------|-----------|
-| **Human** | You | Approve, reject, close | — |
-| **Orchestrator** | IDE AI | Write specs, code, tests | Approve, skip stages |
-| **Reviewer** | External AI | Review, verify claims | Write code, approve |
+See `AGENTS.md` → "Team Roles" and `.cowork/harness/roles.yaml` for the canonical role definitions.
 
 ---
 

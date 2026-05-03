@@ -27,15 +27,7 @@ See `agent.md` for operational rules.
 3. Approve or reject stage deliverables
 4. Close tasks after verification
 
-**Approval format:**
-
-```markdown
-### human: Approve {stage}
-**Date:** YYYY-MM-DD
-**Status:** APPROVED
-**Source:** chat
-**Human instruction:** "{exact quote}"
-```
+**Entry format:** See "Attribution Format" below.
 
 ---
 
@@ -102,21 +94,10 @@ See `agent.md` §1 (human-gated workflow) and §7 (operational process) for oper
 
 ## Creating a New Task
 
-1. Create folder: `.cowork/tasks/NNN_short_name/`
-2. Create `TASK.md` with the task definition
-3. Create `STATE.yaml` from the template in `HARNESS_SPEC.md`
-4. Create `TIMELINE.md` with the first entry
-5. Create stage folders: `01_planning/`, `02_architecture/`, `03_structure/`, `04_implementation/`
-6. Create `evidence/` folder
-7. Start working on `01_planning/spec.md`
+See `.cowork/tasks/README.md` for the canonical task folder structure.
 
 ---
 
 ## Closing a Task
 
-1. Write `04_implementation/result.md`
-2. Fill `evidence/tests.md`, `evidence/changed_files.md`, `evidence/verification.md`
-3. Update `STATE.yaml`: `task_status: complete`
-4. Human verifies → `task_status: verified`
-5. Promote specs to `docs/specs/` if they add permanent knowledge
-6. Human closes → `task_status: closed`
+See `.cowork/tasks/README.md` → "Closing a Task" for the canonical close procedure.
