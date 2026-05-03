@@ -126,7 +126,8 @@
 | `.cowork/prompts/` | Prompt templates for review/approve | 3 |
 | `.cowork/tasks/` | All task work (stages, specs, reviews) | 3 |
 | `.cowork/reviews/` | Shared review logs | 3 |
-| `README.md` | Traditional project README (for humans) | — |
+| `README.md` | Template README (replaced by `README.template.md` after setup) | — |
+| `README.template.md` | Project README template (becomes `README.md` after setup) | — |
 
 ---
 

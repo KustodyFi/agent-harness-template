@@ -40,7 +40,7 @@ else
 fi
 
 # Replace placeholders in templated files
-for file in AGENTS.md agent.project.md README.md .cowork/STATUS.md .agent.default/shared/log.md; do
+for file in AGENTS.md agent.project.md README.template.md .cowork/STATUS.md .agent.default/shared/log.md; do
   if [ -f "$file" ]; then
     "${SED_INPLACE[@]}" "s/{{PROJECT_NAME}}/$PROJECT_NAME_ESC/g" "$file"
     "${SED_INPLACE[@]}" "s/{{PROJECT_NAME_LOWER}}/$PROJECT_NAME_LOWER_ESC/g" "$file"
@@ -50,6 +50,12 @@ for file in AGENTS.md agent.project.md README.md .cowork/STATUS.md .agent.defaul
     "${SED_INPLACE[@]}" "s/{{DATE}}/$DATE/g" "$file"
   fi
 done
+
+# Swap template README → project README
+if [ -f "README.template.md" ]; then
+  mv README.template.md README.md
+  echo "✅ README.template.md → README.md (project README)"
+fi
 
 echo "✅ Placeholders replaced"
 
