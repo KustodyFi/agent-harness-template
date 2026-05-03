@@ -110,12 +110,7 @@ This will:
 
 ### Task Flow
 
-Every task follows 4 stages with human approval gates between each.
-See `.cowork/HARNESS_SPEC.md` for the full process rules.
-
-```
-01_planning → 02_architecture → 03_structure → 04_implementation
-```
+See `.cowork/HARNESS_SPEC.md` → "Task Stages" and "Gate Rules" for the canonical task flow.
 
 ### Team Roles
 

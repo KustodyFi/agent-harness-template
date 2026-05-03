@@ -101,7 +101,4 @@ evidence/
 python3 .cowork/harness/validate_state.py .cowork/tasks/NNN_name/STATE.yaml
 ```
 
-The validator checks:
-- Required fields present
-- `coding_allowed` invariant (false until implementation)
-- Valid stage and status values
+See `.cowork/harness/state_machine.yaml` → `validated_rules` for the full list of enforced invariants.
