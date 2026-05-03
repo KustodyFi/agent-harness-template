@@ -52,13 +52,7 @@ See `agent.md` for operational rules.
 7. Log events in `TIMELINE.md`
 8. At Stage 04, write code and produce evidence
 
-**Review entry format:**
-
-```markdown
-### orchestrator: {title}
-**Date:** YYYY-MM-DD
-**Agent:** {ide-name} ({model})
-```
+**Entry format:** See "Attribution Format" below.
 
 ---
 
@@ -72,14 +66,7 @@ See `agent.md` for operational rules.
 4. Append findings to `review.md`
 5. State verdict: PASS / PASS WITH NOTES / NEEDS REVISION
 
-**Review entry format:**
-
-```markdown
-### agent: {title}
-**Date:** YYYY-MM-DD
-**Agent:** codex | gpt | gemini
-**Mode:** terminal | chat | deep-research
-```
+**Entry format:** See "Attribution Format" below.
 
 ---
 

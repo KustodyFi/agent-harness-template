@@ -26,8 +26,8 @@
       "properties": {
         "status": { "type": "string" },
         "review_rounds": { "type": "integer", "minimum": 0 },
-        "approved_by": { "type": "string" },
-        "approved_date": { "type": "string" }
+        "approved_by": { "type": "string", "description": "Required when status is 'approved'" },
+        "approved_date": { "type": "string", "description": "Required when status is 'approved'" }
       }
     }
   },

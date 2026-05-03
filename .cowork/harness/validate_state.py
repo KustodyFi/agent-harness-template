@@ -102,6 +102,14 @@ def validate(state_path: str) -> list[str]:
             f"(should be true)"
         )
 
+    # --- current_stage_status must match stages[current_stage].status ---
+    stage_block_status = stages[stage].get("status", "pending")
+    if status != stage_block_status:
+        errors.append(
+            f"current_stage_status is '{status}' but "
+            f"stages.{stage}.status is '{stage_block_status}' (must match)"
+        )
+
     # --- Stage ordering: no stage can be active past unapproved prerequisites ---
     current_idx = STAGE_ORDER[stage]
     for i in range(current_idx):
@@ -114,6 +122,7 @@ def validate(state_path: str) -> list[str]:
             )
 
     # --- Review rounds: approved stages must have at least 1 review round ---
+    # --- Approved stages must have approved_by and approved_date ---
     for s in VALID_STAGES:
         stage_data = stages[s]
         if stage_data.get("status") == "approved":
@@ -122,6 +131,16 @@ def validate(state_path: str) -> list[str]:
                 errors.append(
                     f"Stage '{s}' is approved but review_rounds is {rounds} "
                     f"(must be >= 1)"
+                )
+            if not stage_data.get("approved_by"):
+                errors.append(
+                    f"Stage '{s}' is approved but missing 'approved_by' "
+                    f"(must record who approved)"
+                )
+            if not stage_data.get("approved_date"):
+                errors.append(
+                    f"Stage '{s}' is approved but missing 'approved_date' "
+                    f"(must record when approved)"
                 )
 
     # --- Evidence check for closed/verified/complete tasks ---

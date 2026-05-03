@@ -1,5 +1,6 @@
 # Roles — Who can do what in the cowork harness
 # Process permissions for each role (Layer 3 owns this)
+# This is the canonical vocabulary — permissions.yaml must use only these action names
 
 roles:
   human:
@@ -9,6 +10,8 @@ roles:
       - define_task
       - approve_stage
       - reject_stage
+      - request_changes
+      - verify
       - override_any_decision
       - request_agent_review
       - close_task
@@ -19,6 +22,7 @@ roles:
     authority: executor
     can:
       - create_task_folder
+      - read_spec
       - write_spec
       - write_review_entry
       - revise_spec
@@ -40,7 +44,8 @@ roles:
     authority: advisor
     can:
       - read_task_definition
-      - read_active_stage_spec
+      - read_spec
+      - read_code
       - append_review_findings
       - suggest_improvements
     cannot:

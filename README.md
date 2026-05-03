@@ -69,8 +69,7 @@ This will:
 ### 3. Start development
 
 ```bash
-# Your AI agent reads these files on startup:
-# AGENTS.md → agent.md → agent.project.md → docs/standards/ → .cowork/STATUS.md
+# Read AGENTS.md for the authoritative startup sequence
 ```
 
 ---

@@ -22,22 +22,7 @@ You are a **reviewer** — you read specs and code, verify claims, and append fi
 
 ## Entry Format
 
-```markdown
-### agent: {title}
-**Date:** YYYY-MM-DD
-**Agent:** codex | gpt | gemini
-**Mode:** terminal | chat | deep-research
-
-## Findings
-
-### 1. [SEVERITY]: [Title]
-**Location:** [file:line or section]
-**Issue:** [what's wrong]
-**Fix:** [suggested fix]
-
-## Verdict
-PASS | PASS WITH NOTES | NEEDS REVISION
-```
+See `.cowork/ONBOARD.md` → "Attribution Format" for the canonical entry format.
 
 Severity levels: `CRITICAL` / `HIGH` / `MEDIUM` / `LOW`
 

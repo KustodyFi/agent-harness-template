@@ -4,13 +4,7 @@ Quick-approval template for the human:
 
 ---
 
-```markdown
-### human: Approve {stage_name}
-**Date:** YYYY-MM-DD
-**Status:** APPROVED
-**Source:** chat
-**Human instruction:** "Approved — proceed to next stage"
-```
+Use the human approval entry format from `.cowork/ONBOARD.md` → "Attribution Format".
 
 **After approving:**
 1. Orchestrator updates `STATE.yaml` to advance the stage
