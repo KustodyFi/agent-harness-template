@@ -1,6 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Task STATE.yaml Schema",
+  "description": "Structural schema for STATE.yaml. Full semantic validation is in validate_state.py.",
   "type": "object",
   "required": ["task", "current_stage", "current_stage_status", "coding_allowed", "stages"],
   "properties": {
@@ -11,23 +12,35 @@
     "coding_allowed": { "type": "boolean" },
     "stages": {
       "type": "object",
+      "required": ["planning", "architecture", "structure", "implementation"],
       "properties": {
-        "planning": { "$ref": "#/definitions/stage" },
-        "architecture": { "$ref": "#/definitions/stage" },
-        "structure": { "$ref": "#/definitions/stage" },
-        "implementation": { "$ref": "#/definitions/stage" }
-      }
+        "planning": { "$ref": "#/definitions/standard_stage" },
+        "architecture": { "$ref": "#/definitions/standard_stage" },
+        "structure": { "$ref": "#/definitions/standard_stage" },
+        "implementation": { "$ref": "#/definitions/implementation_stage" }
+      },
+      "additionalProperties": false
     }
   },
   "definitions": {
-    "stage": {
+    "standard_stage": {
       "type": "object",
       "required": ["status"],
       "properties": {
-        "status": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "in_review", "changes_requested", "approved"] },
         "review_rounds": { "type": "integer", "minimum": 0 },
-        "approved_by": { "type": "string", "description": "Required when status is 'approved'" },
-        "approved_date": { "type": "string", "description": "Required when status is 'approved'" }
+        "approved_by": { "type": "string", "description": "Required when status is 'approved' (enforced by validate_state.py)" },
+        "approved_date": { "type": "string", "description": "Required when status is 'approved' (enforced by validate_state.py)" }
+      }
+    },
+    "implementation_stage": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": { "type": "string", "enum": ["pending", "in_review", "changes_requested", "approved", "coding", "complete"] },
+        "review_rounds": { "type": "integer", "minimum": 0 },
+        "approved_by": { "type": "string", "description": "Required when status is 'approved' (enforced by validate_state.py)" },
+        "approved_date": { "type": "string", "description": "Required when status is 'approved' (enforced by validate_state.py)" }
       }
     }
   },

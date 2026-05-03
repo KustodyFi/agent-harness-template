@@ -46,12 +46,18 @@ task_lifecycle:
   - verified        # human has verified
   - closed          # published to docs/, task done
 
-# Validation rules
-rules:
+# Validation rules (enforced by validate_state.py)
+validated_rules:
   - only one stage may be active at a time
-  - no stage may be skipped
+  - no stage may be skipped (prerequisites must be approved)
+  - future stages must be pending
   - coding_allowed is false until implementation stage reaches 'coding' status
+  - current_stage_status must match stages[current_stage].status
+  - approved stages require review_rounds >= 1, approved_by, and approved_date
   - task cannot close without evidence files
-  - task cannot close without human verification
+  - task cannot close without all stages completed
+
+# Process rules (enforced by convention, not machine-checkable from STATE.yaml)
+process_rules:
   - stage transitions require human approval
   - review entries are append-only (never delete)

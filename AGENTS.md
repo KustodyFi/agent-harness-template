@@ -120,6 +120,7 @@
 | `.agent.default/` | Default role definitions (tracked baseline) | 2 |
 | `.agent/` | Active role copy (gitignored, per-user) | 2 |
 | `.cowork/STATUS.md` | Live project dashboard | 3 |
+| `.cowork/README.md` | Harness overview (Layer 3 entry point) | 3 |
 | `.cowork/HARNESS_SPEC.md` | Task-stage process rules | 3 |
 | `.cowork/ONBOARD.md` | Process guide for all roles | 3 |
 | `.cowork/harness/` | State machine, validator, permissions | 3 |

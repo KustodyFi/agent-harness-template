@@ -121,6 +121,16 @@ def validate(state_path: str) -> list[str]:
                 f"'{prior}' has status '{prior_status}' (must be 'approved')"
             )
 
+    # --- Future stages must be pending ---
+    for i in range(current_idx + 1, len(VALID_STAGES)):
+        future = VALID_STAGES[i]
+        future_status = stages[future].get("status", "pending")
+        if future_status != "pending":
+            errors.append(
+                f"Current stage is '{stage}' but future stage "
+                f"'{future}' has status '{future_status}' (must be 'pending')"
+            )
+
     # --- Review rounds: approved stages must have at least 1 review round ---
     # --- Approved stages must have approved_by and approved_date ---
     for s in VALID_STAGES:
@@ -155,6 +165,24 @@ def validate(state_path: str) -> list[str]:
                     f"task_status is '{task_status}' but evidence file "
                     f"missing: evidence/{ef}"
                 )
+
+    # --- Task lifecycle ordering ---
+    if task_status == "closed":
+        # All stages must be approved (or implementation must be complete)
+        for s in VALID_STAGES:
+            s_status = stages[s].get("status", "pending")
+            if s == "implementation":
+                if s_status != "complete":
+                    errors.append(
+                        f"task_status is 'closed' but implementation status "
+                        f"is '{s_status}' (must be 'complete')"
+                    )
+            else:
+                if s_status != "approved":
+                    errors.append(
+                        f"task_status is 'closed' but stage '{s}' status "
+                        f"is '{s_status}' (must be 'approved')"
+                    )
 
     return errors
 

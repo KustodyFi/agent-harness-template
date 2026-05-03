@@ -110,19 +110,12 @@ This will:
 
 ### Task Flow
 
-Every task follows 4 stages. No stage may be skipped.
+Every task follows 4 stages with human approval gates between each.
+See `.cowork/HARNESS_SPEC.md` for the full process rules.
 
 ```
 01_planning → 02_architecture → 03_structure → 04_implementation
 ```
-
-At each stage:
-1. **Orchestrator** writes `spec.md`
-2. **Reviewer** verifies and appends to `review.md`
-3. **Human** approves or requests changes
-4. Advance to next stage
-
-Coding only begins at Stage 04 after human approval.
 
 ### Team Roles
 
