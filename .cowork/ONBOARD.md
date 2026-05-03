@@ -108,11 +108,8 @@ Every `review.md` entry has attribution:
 
 ## Critical Rules
 
-See `agent.md` §1 (human-gated workflow) and §7 (operational process) for the full rules.
-Key reminders:
-- **Append only** — never delete review entries
-- **Update STATE.yaml** on every stage transition
-- **You CANNOT approve stages** — only human can
+See `.cowork/HARNESS_SPEC.md` → "Gate Rules" for the canonical process rules.
+See `agent.md` §1 (human-gated workflow) and §7 (operational process) for operational rules.
 
 ---
 

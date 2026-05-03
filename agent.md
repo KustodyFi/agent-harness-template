@@ -2,6 +2,7 @@
 
 > **Organization-wide rules for all AI development agents.**
 > This file is the same across all KustodyFi repositories.
+> It references only `AGENTS.md` (exists in every repo) — no other path references.
 >
 > **Startup:** Read `AGENTS.md` first, then this file.
 > See `AGENTS.md` for the full startup sequence.

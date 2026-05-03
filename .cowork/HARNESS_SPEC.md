@@ -43,7 +43,7 @@ Human: APPROVED ──► advance to next stage
 ## Gate Rules
 
 1. **No skipping.** Stages must proceed in order: 01 → 02 → 03 → 04.
-2. **No coding before 04.** `coding_allowed` is `false` until Stage 04 `spec.md` is approved.
+2. **No coding before 04.** `coding_allowed` is `false` until Stage 04 is approved and status transitions to `coding`.
 3. **Human approval required.** Only the human can advance a stage.
 4. **Review before approval.** Each stage must have at least one review round.
 5. **Append-only reviews.** Never delete review entries.

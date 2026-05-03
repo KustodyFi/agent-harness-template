@@ -1,27 +1,28 @@
 # Stage-level permissions
 # What each role can do at each stage
+# Action names are defined in roles.yaml (canonical vocabulary)
 
 stages:
   planning:
     orchestrator: [write_spec, revise_spec, write_review_entry]
-    reviewer: [read_spec, append_review]
-    human: [approve, reject, request_changes]
+    reviewer: [read_spec, append_review_findings]
+    human: [approve_stage, reject_stage, request_changes]
     coding_allowed: false
 
   architecture:
     orchestrator: [write_spec, revise_spec, write_review_entry]
-    reviewer: [read_spec, append_review]
-    human: [approve, reject, request_changes]
+    reviewer: [read_spec, append_review_findings]
+    human: [approve_stage, reject_stage, request_changes]
     coding_allowed: false
 
   structure:
     orchestrator: [write_spec, revise_spec, write_review_entry]
-    reviewer: [read_spec, append_review]
-    human: [approve, reject, request_changes]
+    reviewer: [read_spec, append_review_findings]
+    human: [approve_stage, reject_stage, request_changes]
     coding_allowed: false
 
   implementation:
-    orchestrator: [write_spec, revise_spec, write_review_entry, write_code, run_tests, produce_evidence]
-    reviewer: [read_spec, read_code, append_review]
-    human: [approve, reject, request_changes, verify, close]
-    coding_allowed: dynamic  # true only after spec approved
+    orchestrator: [write_spec, revise_spec, write_review_entry, implement_code, run_tests, produce_evidence]
+    reviewer: [read_spec, read_code, append_review_findings]
+    human: [approve_stage, reject_stage, request_changes, verify, close_task]
+    coding_allowed: false  # becomes true when status transitions to 'coding'

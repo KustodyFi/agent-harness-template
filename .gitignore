@@ -29,5 +29,5 @@ dist/
 build/
 *.egg-info/
 
-# Evidence (generated during tasks)
-evidence/
+# Evidence (root-level only — task evidence in .cowork/tasks/ must be tracked)
+/evidence/

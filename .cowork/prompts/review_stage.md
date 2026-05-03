@@ -17,22 +17,6 @@ Send this to a reviewer agent to review the current stage:
 - Are there stale references?
 - Is anything missing?
 
-**Write findings** into `.cowork/tasks/{TASK_ID}/{STAGE_FOLDER}/review.md` using this format:
-
-```markdown
-### agent: {stage} R{N} Review
-**Date:** YYYY-MM-DD
-**Agent:** {your-name} ({model})
-**Mode:** terminal
-
-## Findings
-### 1. [SEVERITY]: [Title]
-**Location:** [file:line]
-**Issue:** [description]
-**Fix:** [suggestion]
-
-## Verdict
-PASS | PASS WITH NOTES | NEEDS REVISION
-```
+**Write findings** into `.cowork/tasks/{TASK_ID}/{STAGE_FOLDER}/review.md` using the entry format from `.agent.default/reviewer/ROLE.md` → "Entry Format".
 
 Do NOT modify any other file.

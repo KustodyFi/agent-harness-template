@@ -33,8 +33,7 @@ cd {{PROJECT_NAME_LOWER}}
 │   ├── plans/               ← Roadmap & backlog
 │   └── guides/              ← How-to guides
 ├── .agent.default/          ← Default AI role definitions
-├── .cowork/                 ← Multi-agent harness
-└── src/                     ← Your code here
+└── .cowork/                 ← Multi-agent harness
 ```
 
 ## AI Agent Harness

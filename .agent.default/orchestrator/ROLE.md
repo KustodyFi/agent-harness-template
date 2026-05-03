@@ -34,4 +34,4 @@ See `skills/` folder for domain-specific capabilities:
 ## Workflows
 
 See `workflows/` folder for available `/commands`:
-- `/commit`, `/build`, `/run`, `/push`, `/status`, `/log`, `/harness`, `/review`
+- `/commit`, `/build`, `/run`, `/push`, `/status`, `/log`, `/harness`, `/review`, `/coding-standards`
