@@ -5,16 +5,20 @@
 ## Quick Start
 
 ```bash
-# 1. Clone the repo
+# Clone the repo
 git clone <repo-url>
 cd {{PROJECT_NAME_LOWER}}
 
-# 2. Initialize the AI agent harness
-./setup.sh
+# Pull latest (in case auto-bootstrap ran)
+git pull
 
-# 3. Start development
+# Set up local agent roles (if not already present)
+cp -r .agent.default .agent
+
 # Read AGENTS.md for the full startup sequence
 ```
+
+> **Note:** If `{{PLACEHOLDER}}` values remain in any files, run `./setup.sh` as a fallback.
 
 ## Tech Stack
 

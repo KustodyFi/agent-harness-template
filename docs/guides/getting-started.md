@@ -146,59 +146,11 @@ Run through this checklist:
 
 ## Step 5: Start Working
 
-Your AI agent (Cursor, Copilot, Gemini, etc.) reads files in this order on startup:
-
-```
-AGENTS.md → agent.md → agent.project.md → docs/standards/ → .cowork/STATUS.md
-```
-
-> See `AGENTS.md` → "Startup Sequence" for the authoritative boot order.
+See `AGENTS.md` → "Startup Sequence" for the authoritative boot order that your AI agent follows on startup.
 
 ### Creating your first task
 
-See `.cowork/tasks/README.md` for the canonical task folder structure.
-
-Quick version:
-
-```bash
-mkdir -p .cowork/tasks/001_your_first_task/{01_planning,02_architecture,03_structure,04_implementation,evidence}
-
-# Create the required files
-cat > .cowork/tasks/001_your_first_task/TASK.md << 'EOF'
-# Task: Your First Task
-
-## Objective
-What you want to build.
-
-## Scope
-What's in and out of scope.
-
-## Success Criteria
-How you know it's done.
-EOF
-
-cat > .cowork/tasks/001_your_first_task/STATE.yaml << 'EOF'
-task: "001_your_first_task"
-task_status: active
-current_stage: planning
-current_stage_status: pending
-coding_allowed: false
-
-stages:
-  planning:
-    status: pending
-    review_rounds: 0
-  architecture:
-    status: pending
-    review_rounds: 0
-  structure:
-    status: pending
-    review_rounds: 0
-  implementation:
-    status: pending
-    review_rounds: 0
-EOF
-```
+See `.cowork/tasks/README.md` for the canonical task folder structure, creation steps, and closing procedure.
 
 ---
 

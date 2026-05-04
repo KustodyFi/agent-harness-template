@@ -92,7 +92,7 @@ See `AGENTS.md` → "Team Roles" and `.cowork/harness/roles.yaml` for the canoni
                        HUMAN
 ```
 
-**Key rule:** Only the human can advance stages. Agents propose, humans decide.
+See `AGENTS.md` → "Team Roles" and `.cowork/harness/roles.yaml` for the canonical role rules.
 
 ### Task Lifecycle
 
@@ -124,7 +124,7 @@ See `.cowork/HARNESS_SPEC.md` → "Task Stages" and "Gate Rules" for the canonic
                                      at stage 04)
 ```
 
-**No skipping.** Every stage must be completed in order. Coding only begins at Stage 04 after human approval.
+See `.cowork/HARNESS_SPEC.md` → "Gate Rules" for the canonical stage transition rules.
 
 ### State Machine
 
