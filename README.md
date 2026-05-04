@@ -66,8 +66,8 @@ This will:
 │   └── guides/              ← How-to guides
 │
 ├── .agent.default/          ← Default role definitions (tracked)
-│   ├── orchestrator/        ← Primary AI: writes specs, code, tests
-│   ├── reviewer/            ← Secondary AI: reviews, verifies claims
+│   ├── orchestrator/        ← Orchestrator role files
+│   ├── reviewer/            ← Reviewer role files
 │   └── shared/              ← Shared resources (change log)
 │
 └── .cowork/                 ← Process harness (Layer 3)

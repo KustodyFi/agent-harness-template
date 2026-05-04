@@ -57,7 +57,5 @@ validated_rules:
   - task cannot close/complete without evidence files
   - task cannot close/complete without all stages completed
 
-# Process rules (enforced by convention, not machine-checkable from STATE.yaml)
-process_rules:
-  - stage transitions require human approval
-  - review entries are append-only (never delete)
+# Process rules (not machine-checkable from STATE.yaml)
+# See .cowork/HARNESS_SPEC.md → "Gate Rules" for the canonical list
