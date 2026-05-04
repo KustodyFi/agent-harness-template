@@ -1,0 +1,98 @@
+name: Bootstrap Harness
+
+# Triggers on the first push (when template is used to create a new repo)
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'README.template.md'  # Only runs if template README still exists
+
+permissions:
+  contents: write
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    # Skip if this is the template repo itself
+    if: github.repository != 'KustodyFi/agent-harness-template'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check if already bootstrapped
+        id: check
+        run: |
+          if [ ! -f "README.template.md" ]; then
+            echo "already_bootstrapped=true" >> $GITHUB_OUTPUT
+          else
+            echo "already_bootstrapped=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Bootstrap harness
+        if: steps.check.outputs.already_bootstrapped == 'false'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get project info from GitHub repo metadata
+          REPO_NAME="${{ github.event.repository.name }}"
+          REPO_DESC="${{ github.event.repository.description }}"
+
+          # Derive values
+          PROJECT_NAME=$(echo "$REPO_NAME" | sed 's/-/ /g' | sed 's/\b\w/\u&/g')
+          PROJECT_NAME_LOWER=$(echo "$REPO_NAME" | tr '[:upper:]' '[:lower:]')
+          PROJECT_DESCRIPTION="${REPO_DESC:-A KustodyFi project}"
+          TECH_STACK="TBD"
+          CURRENT_PHASE="Phase 1 — Foundation"
+          DATE=$(date +%Y-%m-%d)
+
+          # Escape for sed
+          escape_sed() {
+            printf '%s' "$1" | sed 's/[\/&\\]/\\&/g'
+          }
+
+          PROJECT_NAME_ESC=$(escape_sed "$PROJECT_NAME")
+          PROJECT_NAME_LOWER_ESC=$(escape_sed "$PROJECT_NAME_LOWER")
+          PROJECT_DESCRIPTION_ESC=$(escape_sed "$PROJECT_DESCRIPTION")
+          TECH_STACK_ESC=$(escape_sed "$TECH_STACK")
+          CURRENT_PHASE_ESC=$(escape_sed "$CURRENT_PHASE")
+
+          # Replace placeholders
+          for file in AGENTS.md agent.project.md README.template.md .cowork/STATUS.md .agent.default/shared/log.md; do
+            if [ -f "$file" ]; then
+              sed -i "s/{{PROJECT_NAME}}/$PROJECT_NAME_ESC/g" "$file"
+              sed -i "s/{{PROJECT_NAME_LOWER}}/$PROJECT_NAME_LOWER_ESC/g" "$file"
+              sed -i "s/{{PROJECT_DESCRIPTION}}/$PROJECT_DESCRIPTION_ESC/g" "$file"
+              sed -i "s/{{TECH_STACK}}/$TECH_STACK_ESC/g" "$file"
+              sed -i "s/{{CURRENT_PHASE}}/$CURRENT_PHASE_ESC/g" "$file"
+              sed -i "s/{{DATE}}/$DATE/g" "$file"
+            fi
+          done
+
+          # Swap README
+          mv README.template.md README.md
+
+          # Bootstrap .agent/ from .agent.default/
+          if [ ! -d ".agent" ]; then
+            cp -r .agent.default .agent
+          fi
+
+          # Remove this workflow (self-destruct)
+          rm -f .github/workflows/bootstrap.yml
+          # Clean up .github if empty
+          rmdir .github/workflows 2>/dev/null || true
+          rmdir .github 2>/dev/null || true
+
+          echo "✅ Harness bootstrapped for: $PROJECT_NAME"
+
+      - name: Commit bootstrap
+        if: steps.check.outputs.already_bootstrapped == 'false'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore: auto-bootstrap harness from template
+
+          - Replaced all {{PLACEHOLDER}} values from repo metadata
+          - Swapped README.template.md → README.md
+          - Bootstrapped .agent/ from .agent.default/
+          - Removed bootstrap workflow (one-time use)"
+          git push

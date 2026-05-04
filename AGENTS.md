@@ -129,7 +129,8 @@
 | `.cowork/reviews/` | Shared review logs | 3 |
 | `README.md` | Template overview (before setup) / Project README (after setup) | — |
 | `README.template.md` | Project README with placeholders (consumed by `setup.sh`) | — |
-| `setup.sh` | First-run bootstrap script | — |
+| `setup.sh` | First-run bootstrap script (manual fallback) | — |
+| `.github/workflows/bootstrap.yml` | Auto-bootstrap on first push (self-deletes) | — |
 | `.gitignore` | Git ignore rules (`.agent/`, secrets, build artifacts) | — |
 
 ---

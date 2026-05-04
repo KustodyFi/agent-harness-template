@@ -22,31 +22,39 @@ See `AGENTS.md` → "Architecture" for the canonical 3-layer diagram and layer o
 
 ## Quick Start
 
-### 1. Create from template
+### Option A: Automated (recommended)
 
-Click **"Use this template"** on GitHub, or:
+1. Click **"Use this template"** on GitHub (or use `gh`):
 
 ```bash
 gh repo create YourOrg/your-project --template KustodyFi/agent-harness-template --public --clone
-cd your-project
 ```
 
-### 2. Run setup
+2. **Done.** A GitHub Action auto-bootstraps the harness on the first push:
+   - Replaces `{{PLACEHOLDER}}` values using your repo name and description
+   - Swaps `README.template.md` → `README.md`
+   - Self-destructs after running once
+
+3. Pull the bootstrapped repo and start working:
 
 ```bash
-./setup.sh
-```
-
-This will:
-- Replace `{{PLACEHOLDER}}` values with your project info
-- Copy `.agent.default/` → `.agent/` (your local, gitignored working copy)
-- Set the initial project date
-
-### 3. Start development
-
-```bash
+git pull  # get the auto-bootstrap commit
 # Read AGENTS.md for the authoritative startup sequence
 ```
+
+### Option B: Manual
+
+```bash
+git clone <your-repo>
+cd <your-repo>
+./setup.sh    # interactive — prompts for project name, tech stack, etc.
+```
+
+### After Setup
+
+1. **`agent.project.md`** — Fill in your architectural invariants
+2. **`docs/standards/coding-standards.md`** — Adjust coding rules for your tech stack
+3. **Update tech stack** — If auto-bootstrapped, edit `AGENTS.md` to replace "TBD" with your actual stack
 
 ---
 
@@ -56,7 +64,10 @@ This will:
 ├── AGENTS.md                ← AI agent entry point (read first)
 ├── agent.md                 ← Org-wide agent policy (§1-§10)
 ├── agent.project.md         ← Project-specific invariants (you fill in)
-├── setup.sh                 ← First-run bootstrap script
+├── setup.sh                 ← Manual bootstrap (fallback)
+│
+├── .github/workflows/
+│   └── bootstrap.yml        ← Auto-bootstrap on first push (self-deletes)
 │
 ├── docs/
 │   ├── standards/           ← Coding standards (canonical)
@@ -104,17 +115,6 @@ See `AGENTS.md` → "Team Roles" and `.cowork/harness/roles.yaml` for the canoni
 
 ---
 
-## Customization
-
-After running `setup.sh`:
-
-1. **`agent.project.md`** — Fill in your architectural invariants
-2. **`docs/standards/coding-standards.md`** — Adjust coding rules for your tech stack
-3. **`.agent.default/orchestrator/workflows/`** — Customize `/build`, `/run` for your project
-4. **`.cowork/STATUS.md`** — Update as your project progresses
-
----
-
 ## Validation
 
 ```bash
@@ -128,4 +128,3 @@ python3 .cowork/harness/validate_state.py .cowork/tasks/NNN_name/STATE.yaml
 ## License
 
 MIT
-
