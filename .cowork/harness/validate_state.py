@@ -167,20 +167,21 @@ def validate(state_path: str) -> list[str]:
                 )
 
     # --- Task lifecycle ordering ---
-    if task_status == "closed":
-        # All stages must be approved (or implementation must be complete)
+    # 'complete' = all stages done + evidence written (per state_machine.yaml)
+    # 'closed' = verified + published
+    if task_status in ("complete", "verified", "closed"):
         for s in VALID_STAGES:
             s_status = stages[s].get("status", "pending")
             if s == "implementation":
                 if s_status != "complete":
                     errors.append(
-                        f"task_status is 'closed' but implementation status "
+                        f"task_status is '{task_status}' but implementation status "
                         f"is '{s_status}' (must be 'complete')"
                     )
             else:
                 if s_status != "approved":
                     errors.append(
-                        f"task_status is 'closed' but stage '{s}' status "
+                        f"task_status is '{task_status}' but stage '{s}' status "
                         f"is '{s_status}' (must be 'approved')"
                     )
 

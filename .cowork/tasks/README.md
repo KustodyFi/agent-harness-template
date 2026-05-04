@@ -49,4 +49,19 @@ NNN_name/
 
 ## Creating a Task
 
-See `.cowork/ONBOARD.md` → "Creating a New Task" for step-by-step instructions.
+1. Create folder: `.cowork/tasks/NNN_short_name/`
+2. Create `TASK.md` with the task definition
+3. Create `STATE.yaml` from the template in `.cowork/HARNESS_SPEC.md`
+4. Create `TIMELINE.md` with the first entry
+5. Create stage folders: `01_planning/`, `02_architecture/`, `03_structure/`, `04_implementation/`
+6. Create `evidence/` folder
+7. Start working on `01_planning/spec.md`
+
+## Closing a Task
+
+1. Write `04_implementation/result.md`
+2. Fill `evidence/tests.md`, `evidence/changed_files.md`, `evidence/verification.md`
+3. Update `STATE.yaml`: `task_status: complete`
+4. Human verifies → `task_status: verified`
+5. Promote specs to `docs/specs/` if they add permanent knowledge
+6. Human closes → `task_status: closed`

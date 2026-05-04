@@ -6,7 +6,4 @@ Quick-approval template for the human:
 
 Use the human approval entry format from `.cowork/ONBOARD.md` → "Attribution Format".
 
-**After approving:**
-1. Orchestrator updates `STATE.yaml` to advance the stage
-2. Orchestrator logs the transition in `TIMELINE.md`
-3. Work begins on the next stage
+**After approving:** See `.cowork/HARNESS_SPEC.md` → "Gate Rules" for the canonical stage transition process.

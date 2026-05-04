@@ -16,27 +16,7 @@ See `AGENTS.md` for the full architecture and `agent.md` for operational rules.
 
 ## 3-Layer Architecture
 
-```
-┌──────────────────────────────────────────────────────┐
-│  LAYER 3: HARNESS                     .cowork/       │
-│  Process engine: state machine, task stages,          │
-│  review logs, approval gates, prompt templates        │
-├──────────────────────────────────────────────────────┤
-│  LAYER 2: ROLES                       .agent/        │
-│  Per-role identity: orchestrator, reviewer            │
-│  Skills, workflows, limits (gitignored, per-user)     │
-├──────────────────────────────────────────────────────┤
-│  LAYER 1: POLICY                      agent.md       │
-│  Org-wide rules: coding standards, secrets,           │
-│  human-gated workflow, evaluation loop               │
-└──────────────────────────────────────────────────────┘
-```
-
-| Layer | What | Where |
-|-------|------|-------|
-| **1 — Policy** | Org-wide rules (same everywhere) | `agent.md`, `docs/standards/` |
-| **2 — Roles** | Agent identity, skills, workflows | `.agent.default/` → `.agent/` |
-| **3 — Harness** | Process engine, state machine, tasks | `.cowork/` |
+See `AGENTS.md` → "Architecture" for the canonical 3-layer diagram and layer ownership.
 
 ---
 

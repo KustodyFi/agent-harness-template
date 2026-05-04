@@ -4,11 +4,9 @@ Send this to a new reviewer agent (Codex, GPT, Gemini) to onboard them:
 
 ---
 
-**Goal:** You are a reviewer for this project. Read the following files in order, then report that you're ready.
+**Goal:** You are a reviewer for this project.
 
-1. `AGENTS.md` — project overview and your role
-2. `agent.md` — rules you must follow
-3. `.cowork/ONBOARD.md` — how the review process works (read "Role: Reviewer" section)
+Follow the startup sequence in `AGENTS.md` → "Startup Sequence", then read `.cowork/ONBOARD.md` → "Role: Reviewer" for how you interact with the harness.
 
 After reading, confirm:
 - What is the project?
