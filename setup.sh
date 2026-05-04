@@ -57,6 +57,14 @@ if [ -f "README.template.md" ]; then
   echo "✅ README.template.md → README.md (project README)"
 fi
 
+# Remove auto-bootstrap workflow (manual setup replaces it)
+if [ -f ".github/workflows/bootstrap.yml" ]; then
+  rm -f .github/workflows/bootstrap.yml
+  rmdir .github/workflows 2>/dev/null || true
+  rmdir .github 2>/dev/null || true
+  echo "✅ Removed bootstrap.yml (not needed after manual setup)"
+fi
+
 echo "✅ Placeholders replaced"
 
 # Bootstrap .agent/ from .agent.default/
