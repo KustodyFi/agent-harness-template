@@ -31,11 +31,25 @@ See `.cowork/harness/state_machine.yaml` → `validated_rules` for the full list
 
 ---
 
-## Installation
+## How to Use This Template
 
-### Option A: Automated (recommended)
+### Prerequisites (one-time, org admin)
 
-1. Click **"Use this template"** on GitHub, or:
+Enable this repo as a GitHub template:
+
+```bash
+gh repo edit KustodyFi/agent-harness-template --template
+```
+
+Or: GitHub UI → **Settings** → check **Template repository**.
+
+### For Every New Project
+
+**Step 1 — Create your repo from the template:**
+
+Click the green **"Use this template"** button on this repo's GitHub page → **"Create a new repository"**.
+
+Or via CLI:
 
 ```bash
 gh repo create KustodyFi/your-project \
@@ -45,24 +59,41 @@ gh repo create KustodyFi/your-project \
   --clone
 ```
 
-2. **Wait ~30 seconds.** A GitHub Action auto-bootstraps your repo and self-destructs.
+**Step 2 — Wait ~30 seconds for auto-bootstrap:**
 
-3. Pull the bootstrapped repo:
+A GitHub Action runs automatically on first push:
+- Replaces all `{{PLACEHOLDER}}` values using your repo name and description
+- Swaps `README.template.md` → `README.md` (your project README)
+- Self-destructs (one-time use)
 
-```bash
-cd your-project
-git pull  # get the auto-bootstrap commit
-cp -r .agent.default .agent  # create local role copy
-```
+> **Branch protection?** Use Actions → "Run workflow" (manual dispatch) or fall back to `./setup.sh`.
 
-> **Branch protection?** If auto-bootstrap can't push, use Actions → "Run workflow" (manual dispatch) or fall back to Option B.
-
-### Option B: Manual
+**Step 3 — Clone and set up locally:**
 
 ```bash
 git clone git@github.com:KustodyFi/your-project.git
 cd your-project
-./setup.sh    # interactive prompts
+git pull                        # get the bootstrap commit
+cp -r .agent.default .agent     # create your local role copy (gitignored)
+```
+
+**Step 4 — Open in your IDE and start working:**
+
+Open the project in Cursor, VS Code, or any AI-enabled IDE. Your AI agent automatically reads `AGENTS.md` from the repo root — this tells it:
+
+1. The startup sequence (which files to read and in what order)
+2. What it can and can't do (orchestrator vs reviewer roles)
+3. Where the process rules live (`.cowork/HARNESS_SPEC.md`)
+4. How to create and manage tasks (`.cowork/tasks/README.md`)
+
+**The AI is fully onboarded. You're ready to work.**
+
+### Manual Bootstrap (fallback)
+
+If the GitHub Action didn't run:
+
+```bash
+./setup.sh    # interactive prompts for name, description, tech stack
 git add -A && git commit -m "chore: bootstrap harness" && git push
 ```
 
