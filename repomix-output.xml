@@ -1,0 +1,2841 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+.agent.default/
+  orchestrator/
+    skills/
+      harness/
+        SKILL.md
+    workflows/
+      build.md
+      coding-standards.md
+      commit.md
+      harness.md
+      log.md
+      push.md
+      review.md
+      run.md
+      status.md
+    ROLE.md
+  reviewer/
+    skills/
+      code_review/
+        SKILL.md
+    ROLE.md
+  shared/
+    log.md
+.cowork/
+  harness/
+    evidence.schema.json
+    permissions.yaml
+    roles.yaml
+    state_machine.yaml
+    state.schema.json
+    validate_state.py
+  prompts/
+    approve_stage.md
+    onboard_agent.md
+    review_stage.md
+  reviews/
+    harness_review.md
+    README.md
+  tasks/
+    README.md
+  HARNESS_SPEC.md
+  ONBOARD.md
+  README.md
+  STATUS.md
+.github/
+  workflows/
+    bootstrap.yml
+docs/
+  adr/
+    000-template.md
+    README.md
+  guides/
+    getting-started.md
+    README.md
+  plans/
+    README.md
+  specs/
+    README.md
+  standards/
+    coding-standards.md
+.gitignore
+agent.md
+agent.project.md
+AGENTS.md
+README.md
+README.template.md
+setup.sh
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path=".agent.default/orchestrator/skills/harness/SKILL.md">
+---
+name: Harness Rules
+description: Mandatory harness engineering rules. MUST be loaded before any work begins.
+---
+
+# Harness — Pre-Task Loading
+
+Before starting ANY task, follow the startup sequence in `AGENTS.md`.
+
+For harness-governed tasks (anything under `.cowork/tasks/`), also read:
+
+1. `.cowork/HARNESS_SPEC.md` — task-stage workflow rules
+2. `.cowork/STATUS.md` — project dashboard
+3. Active task's `STATE.yaml` — current stage and status
+
+**Follow all rules strictly. No exceptions.**
+
+> The authoritative startup sequence is in `AGENTS.md` §Startup Sequence.
+</file>
+
+<file path=".agent.default/orchestrator/workflows/build.md">
+---
+description: Build the project
+---
+
+# /build — Build Project
+
+## Steps
+
+1. Run the project's build command
+2. Report success or failure
+3. If build fails: fix the error or ask the user
+
+## Rules
+
+- Always run from the project root
+- Check for build prerequisites first
+</file>
+
+<file path=".agent.default/orchestrator/workflows/coding-standards.md">
+---
+description: Show coding standards
+---
+
+# /coding-standards
+
+The canonical coding standards are at:
+
+→ `docs/standards/coding-standards.md`
+
+Read that file directly. This workflow exists only as a pointer.
+</file>
+
+<file path=".agent.default/orchestrator/workflows/commit.md">
+---
+description: Stage all changes and commit with a conventional commit message
+---
+
+# /commit — Stage & Commit
+
+## When to use
+
+After completing a unit of work and verifying it locally.
+
+## Steps
+
+1. Check for changes: `git status`
+2. Stage everything: `git add -A`
+3. Review the diff: `git diff --cached --stat`
+4. Construct a conventional commit message:
+
+```
+<type>(<scope>): <short summary>
+
+<body — one-line-per-change, bullet list>
+```
+
+**Types:** `feat`, `fix`, `docs`, `chore`, `refactor`, `test`, `style`, `build`
+
+5. Commit: `git commit -m "<message>"`
+6. Confirm: `git log -n 1 --oneline`
+
+## Rules
+
+- Never commit secrets, `.env` files, or API keys
+- Always include a meaningful scope
+- If partial commit needed, ask the user first
+</file>
+
+<file path=".agent.default/orchestrator/workflows/log.md">
+---
+description: Append a new round to the change log
+---
+
+# /log — Append Change Log Entry
+
+## Steps
+
+1. Read `.agent/shared/log.md`
+2. Determine the next round number
+3. Append a new entry with this format:
+
+```markdown
+## Round N — YYYY-MM-DD HH:MM TZ
+
+**Status:** ✅ Completed | 🔄 In Progress
+**Objective:** {what was accomplished}
+
+**Files Created / Modified:**
+
+- `path/to/file` — description
+
+**Next Steps:**
+
+- {what to do next}
+```
+
+## Rules
+
+- Always increment the round number
+- Include exact file paths, not vague descriptions
+- Record decisions made during the session
+</file>
+
+<file path=".agent.default/orchestrator/workflows/push.md">
+---
+description: Push current branch to origin
+---
+
+# /push — Push to Remote
+
+## Steps
+
+1. Check current branch: `git branch --show-current`
+2. Push: `git push origin <branch>`
+3. If push fails: **STOP.** Tell the user the error. Do NOT retry.
+
+## Rules
+
+- Push is the human's responsibility — suggest the command, let them run it
+- Never force-push without explicit human approval
+- Never push to main without review
+</file>
+
+<file path=".agent.default/orchestrator/workflows/review.md">
+---
+description: Run self-review against docs contracts
+---
+
+# /review — Self-Review
+
+## Steps
+
+1. Read `docs/specs/` — verify code matches specs
+2. Check for stale cross-references: `grep -rn "old/path"` across docs
+3. Verify all test suites pass
+4. Report findings
+
+## Checklist
+
+- [ ] Code matches architecture spec?
+- [ ] File structure matches file-structure spec?
+- [ ] No hardcoded values?
+- [ ] No functions > 100 lines?
+- [ ] All tests pass?
+- [ ] No duplicate content across docs?
+</file>
+
+<file path=".agent.default/orchestrator/workflows/run.md">
+---
+description: Build and run the project locally
+---
+
+# /run — Build & Run
+
+## Steps
+
+1. Build the project (see `/build`)
+2. Run the dev server or entry point
+3. Report the output
+
+## Rules
+
+- Never hardcode credentials in run commands
+- Use environment variables for secrets
+</file>
+
+<file path=".agent.default/orchestrator/workflows/status.md">
+---
+description: Show project status and recent activity
+---
+
+# /status — Project Status
+
+## Steps
+
+1. Read `.cowork/STATUS.md` — project dashboard
+2. Check git status: `git status --short`
+3. Show recent commits: `git log -n 5 --oneline`
+4. If harness task is active, show `STATE.yaml` current stage
+
+## Output Format
+
+```
+Phase: {current phase}
+Task: {active task or "none"}
+Stage: {current stage} — {status}
+Git: {clean | N files modified}
+Last commit: {hash} {message}
+```
+</file>
+
+<file path=".agent.default/reviewer/skills/code_review/SKILL.md">
+---
+name: Code Review Skill
+description: How to perform structured code and spec reviews.
+---
+
+# Code Review Skill
+
+## When to Use
+When asked to review a spec, code, or architecture document.
+
+## Process
+1. Read the `review.md` in the active stage directory — it contains review instructions
+2. Read the corresponding `spec.md`
+3. Verify all claims with read-only commands
+4. Append findings using the entry format from `ROLE.md`
+5. State your verdict
+
+## What to Check
+- Are factual claims verifiable? (file paths, line counts, function names)
+- Are there internal inconsistencies?
+- Are there stale references to moved/deleted files?
+- Does the spec match the actual codebase?
+- Are there duplicate content across files?
+</file>
+
+<file path=".agent.default/shared/log.md">
+# {{PROJECT_NAME}} — Agent Change Log
+
+> This log tracks every round of AI-assisted development.
+> If a session fails or is interrupted, the next session should read this file first to resume.
+
+---
+
+<!-- Append new rounds below this line -->
+</file>
+
+<file path=".cowork/harness/evidence.schema.json">
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Task Evidence Manifest",
+  "type": "object",
+  "required": ["task", "evidence"],
+  "properties": {
+    "task": { "type": "string" },
+    "evidence": {
+      "type": "object",
+      "required": ["tests", "changed_files", "verification"],
+      "properties": {
+        "tests": { "type": "string", "description": "Path to tests.md" },
+        "changed_files": { "type": "string", "description": "Path to changed_files.md" },
+        "verification": { "type": "string", "description": "Path to verification.md" }
+      }
+    }
+  }
+}
+</file>
+
+<file path=".cowork/reviews/harness_review.md">
+# Harness Template Review — Multi-Agent Review Tracker
+
+> **Orchestrator:** Gemini (Cursor IDE)
+> **Reviewers:** GPT (chat), Gemini (chat), Codex (terminal)
+> **Scope:** Full agent-harness-template — architecture, file structure, implementation, documentation
+
+---
+
+## Review Plan
+
+### Round 1 — Full Sweep
+All 3 reviewers audit the entire template independently.
+
+| Reviewer | Focus | Input | Status |
+|----------|-------|-------|--------|
+| GPT | Architecture & design soundness | repomix output + prompt | ⬜ Pending |
+| Gemini | Implementation correctness & edge cases | repomix output + prompt | ⬜ Pending |
+| Codex | Structural integrity & one-source-of-truth | reads repo + this file | ⬜ Pending |
+
+### Round 2 — Convergence
+Codex verifies all R1 fixes. GPT/Gemini only if R1 had architecture-level findings.
+
+### Round 3+ — Final PASS
+If needed. Goal is PASS from all reviewers.
+
+---
+
+## Orchestrator Decisions
+
+> I (orchestrator) triage all findings here. Each finding gets:
+> - ✅ ACCEPTED — will fix
+> - ❌ REJECTED — reason documented
+> - ⏸️ DEFERRED — tracked for future task
+
+---
+
+## Round 1 Findings
+
+### GPT Findings
+_Paste GPT R1 output here. Orchestrator will triage below._
+
+### Gemini Findings
+_Paste Gemini R1 output here. Orchestrator will triage below._
+
+### Codex Findings
+_Codex appends findings here directly, or human pastes them._
+
+---
+
+## Orchestrator Triage — R1
+_After all 3 reviewers submit, orchestrator consolidates here:_
+
+| # | Finding | Source | Severity | Decision | Notes |
+|---|---------|--------|----------|----------|-------|
+| | | | | | |
+
+---
+
+## Round 2 Findings
+_After R1 fixes, Codex re-reviews._
+
+---
+
+## Codex Instructions
+
+> **Codex:** You are the structural integrity reviewer. Read the entire repository.
+> After review, append your findings to this file under "### Codex Findings".
+> Use the output format specified in the R1 prompt section below.
+> The orchestrator will triage your findings and decide what to fix.
+
+---
+
+## Status
+
+| Round | GPT | Gemini | Codex | Fixes Applied | Next |
+|-------|-----|--------|-------|---------------|------|
+| R1 | ⬜ | ⬜ | ⬜ | ⬜ | — |
+| R2 | — | — | ⬜ | ⬜ | — |
+| R3 | — | — | ⬜ | ⬜ | — |
+</file>
+
+<file path=".cowork/reviews/README.md">
+# Shared Review Logs
+
+> Cross-cutting reviews that aren't tied to a specific task stage.
+> For stage-specific reviews, use `{stage}/review.md` inside the task folder.
+
+## When to Use This Folder
+
+- Full repo reviews (architecture audit, code quality sweep)
+- Cross-task analysis (dependency audit, security review)
+- External agent reports
+
+## Naming
+
+```
+{topic}.md
+```
+
+Examples:
+- `full_repo_review.md`
+- `security_audit.md`
+- `dependency_review.md`
+</file>
+
+<file path=".cowork/STATUS.md">
+# {{PROJECT_NAME}} — Project Status
+
+> **Last updated:** {{DATE}}
+> **Updated by:** orchestrator
+
+---
+
+## Phase Progress
+
+| Phase | Name | Status | Summary |
+|-------|------|--------|---------|
+| **1** | **{{CURRENT_PHASE}}** | **🟡 Active** | — |
+
+---
+
+## Active Tasks
+
+_No tasks created yet. See `.cowork/ONBOARD.md` for how to create one._
+
+---
+
+## Key Files
+
+| File | Purpose |
+|------|---------|
+| `.cowork/STATUS.md` | **This file** — project dashboard |
+| `.cowork/HARNESS_SPEC.md` | Task-stage process rules |
+| `.cowork/ONBOARD.md` | Process guide for all roles |
+| `.cowork/tasks/` | All task work |
+</file>
+
+<file path="docs/adr/000-template.md">
+# ADR-000: Template
+
+## Status
+PROPOSED | ACCEPTED | DEPRECATED | SUPERSEDED
+
+## Context
+What is the issue we're seeing that motivates this decision?
+
+## Decision
+What is the change we're proposing?
+
+## Consequences
+What becomes easier or harder as a result?
+
+## Alternatives Considered
+What other options were evaluated and why were they rejected?
+</file>
+
+<file path="docs/adr/README.md">
+# Architecture Decision Records (ADR)
+
+> **Why decisions were made.** Each ADR captures the context, options considered,
+> and rationale for a significant technical decision.
+
+## Format
+
+Use `000-template.md` as the starting point for each ADR.
+
+## Naming
+
+`NNN-short-title.md` — e.g., `001-chose-redis-streams.md`, `002-rejected-langraph.md`
+
+## When to Write an ADR
+
+- Choosing a framework, library, or tool
+- Changing architecture (adding a layer, splitting a service)
+- Rejecting an approach (document WHY so future agents don't re-propose it)
+- Any decision that affects multiple files or future work
+</file>
+
+<file path="docs/guides/README.md">
+# Guides — How-To Documentation
+
+> **Operational guides** for running, deploying, and demoing the project.
+
+## What Goes Here
+
+| File | Content |
+|------|---------|
+| `run.md` | How to run locally (dev environment setup) |
+| `demo.md` | How to demo the project |
+| `deploy.md` | How to deploy to staging/production |
+</file>
+
+<file path="docs/plans/README.md">
+# Plans — Roadmap & Backlog
+
+> **What's coming.** High-level planning documents.
+
+## What Goes Here
+
+| File | Content |
+|------|---------|
+| `roadmap.md` | Phase plan with milestones |
+| `backlog.md` | Future work items, prioritized |
+| `schedule.md` | Sprint/task schedule (if maintained) |
+| `history/` | Completed phase summaries |
+</file>
+
+<file path="docs/specs/README.md">
+# Project Specs — Ground Truth
+
+> **Anti-hallucination layer.** These documents describe what the project IS.
+> Agents must read these before starting work. If an agent hallucinates,
+> point it here.
+
+## What Goes Here
+
+Verified, approved specs promoted from completed task stages:
+
+| File | Content | Promoted From |
+|------|---------|--------------|
+| `architecture.md` | System design, components, data flow, boundaries | `02_architecture/spec.md` |
+| `file-structure.md` | Repo layout, what each folder/file is for | `03_structure/spec.md` |
+| `data-models.md` | Schemas, state machines, event formats | `03_structure/spec.md` |
+| `api-contracts.md` | Endpoints, inputs/outputs, error codes | `04_implementation/result.md` |
+| `dependencies.md` | Tech stack, versions, why each was chosen | `02_architecture/spec.md` |
+
+## Rules
+
+1. **Only approved specs go here.** Don't write speculative content.
+2. **Update when code changes.** If a task changes architecture, update the spec.
+3. **One file per topic.** Don't create `architecture-v2.md` — update the original.
+</file>
+
+<file path="docs/standards/coding-standards.md">
+---
+description: Coding standards for all project code
+---
+
+# Coding Standards
+
+Follow these rules for ALL code in this project. No exceptions.
+
+---
+
+## 1. Function Size
+
+- **Max 100 lines per function.** If a function exceeds this, split it.
+- Prefer 20-50 line functions. Each function does ONE thing.
+- The function name should describe what it does — no `process()` or `handle()`.
+
+---
+
+## 2. No Nested If
+
+Use **guard clauses** (early returns) instead of nested if/else.
+
+```python
+# Good: guard clause
+def get_item(registry, item_id: str):
+    item = registry.lookup(item_id)
+    if not item:
+        raise ItemNotFoundError(item_id)
+    return _to_response(item)
+```
+
+---
+
+## 3. No Hardcoded Values
+
+All constants in dedicated config files or module-level constants at the top.
+
+---
+
+## 4. Single Responsibility
+
+Each file/module does ONE thing.
+
+---
+
+## 5. 3-Layer API Architecture
+
+```
+Route (thin) → Service (logic) → Data (storage/bus)
+```
+
+| Layer | Rules |
+|-------|-------|
+| **Route** | Only framework imports. Validate → call service → return response. |
+| **Service** | No framework imports. Pure logic. No HTTP knowledge. |
+| **Data** | Shared tools — bus, registry, storage. |
+
+---
+
+## 6. DRY (Don't Repeat Yourself)
+
+- If two functions share logic, extract a helper with `_` prefix.
+- Shared logic goes in a utility function, not copy-pasted.
+
+---
+
+## 7. Error Handling
+
+- Define domain-specific exceptions.
+- Raise in service layer. Catch and convert in route layer.
+- Never use bare `except:` — always catch specific exceptions.
+
+---
+
+## 8. Naming Conventions
+
+| Item | Convention | Example |
+|------|-----------|---------|
+| Files | `snake_case.py`, `camelCase.jsx` | `agent_service.py` |
+| Functions | `snake_case` | `list_agents()` |
+| Private helpers | `_` prefix | `_parse_step()` |
+| Classes | `PascalCase` | `AgentResponse` |
+| Constants | `UPPER_SNAKE_CASE` | `API_PORT` |
+
+---
+
+## 9. Docstrings
+
+- Every module: top-level docstring explaining purpose.
+- Every public function: one-line docstring.
+- Private helpers: docstring if non-obvious.
+
+---
+
+## 10. Testing
+
+- Every service gets unit tests.
+- Test file naming: `test_{module}.py`.
+- Assert exact values, not just `is not None`.
+
+---
+
+## 11. Type Hints
+
+- All functions must have complete type hints.
+- Return types are mandatory.
+
+---
+
+## 12. No Ghost Code
+
+- Do not leave `# TODO: implement this` or `pass` in new code.
+- If intentionally blank, raise `NotImplementedError` with context.
+
+---
+
+## 13. Immutability
+
+- Treat all function arguments as read-only.
+- Return new copies instead of mutating in place.
+
+---
+
+## 14. Specific Exceptions
+
+- Never use bare `except:` or `except Exception: pass`.
+- Domain-specific errors include context.
+
+---
+
+## 15. Pure Business Logic
+
+- Keep business logic pure — no I/O inside service functions.
+- Services receive data as arguments and return results.
+
+---
+
+## 16. Secrets Safety
+
+- Never embed secrets, keys, or credentials in code, test fixtures, logs, or docs.
+- Test fixtures must use obviously fake values.
+</file>
+
+<file path="agent.project.md">
+# Project Invariants (DO NOT DEVIATE)
+
+> **This file contains project-specific rules.**
+> These are human-owned and never overwritten by framework updates.
+> For org-wide rules, see `agent.md`.
+
+## Architectural Invariants
+
+<!-- Replace these with your project's non-negotiable rules -->
+
+* **{{INVARIANT_1}}**
+* **{{INVARIANT_2}}**
+* **{{INVARIANT_3}}**
+* **{{INVARIANT_4}}**
+* **{{INVARIANT_5}}**
+
+## Security
+
+* [DON'T] Never embed secrets, keys, or credentials in code, fixtures, logs, or docs.
+* [DON'T] Never bypass sandbox or security boundaries.
+* [DON'T] Never self-authorize privileged execution.
+
+## Coding Standards
+
+For the full coding standards, see `docs/standards/coding-standards.md`.
+</file>
+
+<file path=".agent.default/orchestrator/workflows/harness.md">
+---
+description: Load harness rules before starting any task
+---
+
+# /harness — Load Harness Rules
+
+Read `.agent/orchestrator/skills/harness/SKILL.md` and follow the pre-task loading sequence.
+</file>
+
+<file path=".agent.default/orchestrator/ROLE.md">
+# Orchestrator Role
+
+## Identity
+
+You are the **orchestrator** — the primary development agent. You drive tasks through the harness stages, write code, and produce evidence.
+
+## Responsibilities
+
+1. Follow the startup sequence in `AGENTS.md`
+2. Read active task's `TASK.md` and `STATE.yaml`
+3. Write `spec.md` for each stage
+4. Incorporate human and reviewer feedback into `review.md`
+5. Prepare reviewer prompts — human delivers to reviewer agent
+6. Revise `spec.md` until human approves
+7. Update `STATE.yaml` and `TIMELINE.md` on stage transitions
+8. Write production code (Stage 4 only, after approval)
+9. Commit after each logical unit of work
+10. Update `.cowork/STATUS.md` after significant changes
+
+## Limits
+
+- **Cannot approve stages** — only human can
+- **Cannot skip stages** — 01 → 02 → 03 → 04
+- **Cannot code before approval** — wait for harness gate
+- **Must stop when blocked** — state the blocker, ask human, do NOT retry
+- **Push is human's responsibility** — never retry a failed push
+- **Cannot self-review** — must invoke at least one reviewer per stage
+
+## Skills
+
+See `skills/` folder for domain-specific capabilities:
+- `harness/SKILL.md` — task-stage process knowledge
+
+## Workflows
+
+See `workflows/` folder for available `/commands`:
+- `/commit`, `/build`, `/run`, `/push`, `/status`, `/log`, `/harness`, `/review`, `/coding-standards`
+</file>
+
+<file path=".agent.default/reviewer/ROLE.md">
+# Reviewer Role
+
+## Identity
+
+You are a **reviewer** — you read specs and code, verify claims, and append findings. You never write production code or advance stages.
+
+## Responsibilities
+
+1. Read the `review.md` file in the active stage directory
+2. Read the corresponding `spec.md`
+3. Verify claims with read-only commands (`grep`, `find`, `wc`, `cat`)
+4. Append findings to `review.md` below the reviewer marker
+5. State verdict: PASS / PASS WITH NOTES / NEEDS REVISION
+
+## Limits
+
+- **Read-only commands only** — never modify source code
+- **Append to review.md only** — never modify spec.md, STATE.yaml, or any other file
+- **Never approve or advance stages** — that's the human's call
+- **Never commit** — that's the orchestrator's job
+- **Suggest, don't mandate** — the orchestrator decides what to fix
+
+## Entry Format
+
+See `.cowork/ONBOARD.md` → "Attribution Format" for the canonical entry format.
+
+Severity levels: `CRITICAL` / `HIGH` / `MEDIUM` / `LOW`
+
+## Rules
+
+- **Be specific** — exact `file:line`, not "somewhere in the code"
+- **Append only** — never delete earlier entries
+- **If something is correct**, say so explicitly
+- **Review only the active stage** unless asked otherwise
+</file>
+
+<file path=".cowork/harness/permissions.yaml">
+# Stage-level permissions
+# What each role can do at each stage
+# Action names are defined in roles.yaml (canonical vocabulary)
+
+stages:
+  planning:
+    orchestrator: [write_spec, revise_spec, write_review_entry]
+    reviewer: [read_spec, append_review_findings]
+    human: [approve_stage, reject_stage, request_changes]
+    coding_allowed: false
+
+  architecture:
+    orchestrator: [write_spec, revise_spec, write_review_entry]
+    reviewer: [read_spec, append_review_findings]
+    human: [approve_stage, reject_stage, request_changes]
+    coding_allowed: false
+
+  structure:
+    orchestrator: [write_spec, revise_spec, write_review_entry]
+    reviewer: [read_spec, append_review_findings]
+    human: [approve_stage, reject_stage, request_changes]
+    coding_allowed: false
+
+  implementation:
+    orchestrator: [write_spec, revise_spec, write_review_entry, implement_code, run_tests, produce_evidence]
+    reviewer: [read_spec, read_code, append_review_findings]
+    human: [approve_stage, reject_stage, request_changes, verify, close_task]
+    coding_allowed: false  # becomes true when status transitions to 'coding'
+</file>
+
+<file path=".cowork/harness/roles.yaml">
+# Roles — Who can do what in the cowork harness
+# Process permissions for each role (Layer 3 owns this)
+# This is the canonical vocabulary — permissions.yaml must use only these action names
+
+roles:
+  human:
+    label: "HIL (Human-in-the-Loop)"
+    authority: owner
+    can:
+      - define_task
+      - approve_stage
+      - reject_stage
+      - request_changes
+      - verify
+      - override_any_decision
+      - request_agent_review
+      - close_task
+    cannot: []
+
+  orchestrator:
+    label: "Orchestrator (IDE AI)"
+    authority: executor
+    can:
+      - create_task_folder
+      - read_spec
+      - write_spec
+      - write_review_entry
+      - revise_spec
+      - implement_code
+      - run_tests
+      - produce_evidence
+      - update_state
+      - update_timeline
+    cannot:
+      - skip_stage
+      - approve_stage
+      - close_task
+      - start_coding_before_approval
+      - delete_review_entries
+      - overwrite_human_decisions
+
+  reviewer:
+    label: "Reviewer Agent (external AI)"
+    authority: advisor
+    can:
+      - read_task_definition
+      - read_spec
+      - read_code
+      - append_review_findings
+      - suggest_improvements
+    cannot:
+      - edit_production_code
+      - advance_stage_state
+      - approve_or_reject_stage
+      - override_human_decisions
+      - rewrite_task_scope
+</file>
+
+<file path=".cowork/prompts/onboard_agent.md">
+# Prompt: Onboard a Reviewer Agent
+
+Send this to a new reviewer agent (Codex, GPT, Gemini) to onboard them:
+
+---
+
+**Goal:** You are a reviewer for this project.
+
+Follow the startup sequence in `AGENTS.md` → "Startup Sequence", then read `.cowork/ONBOARD.md` → "Role: Reviewer" for how you interact with the harness.
+
+After reading, confirm:
+- What is the project?
+- What is your role?
+- What can you NOT do?
+
+Do NOT modify any files. Read-only.
+</file>
+
+<file path=".cowork/prompts/review_stage.md">
+# Prompt: Review a Stage
+
+Send this to a reviewer agent to review the current stage:
+
+---
+
+**Goal:** Review the {STAGE_NAME} spec for task {TASK_NAME}.
+
+**Read these files:**
+1. `.cowork/tasks/{TASK_ID}/TASK.md` — what we're building
+2. `.cowork/tasks/{TASK_ID}/{STAGE_FOLDER}/spec.md` — the spec to review
+3. `.cowork/tasks/{TASK_ID}/{STAGE_FOLDER}/review.md` — previous review rounds (if any)
+
+**Check:**
+- Are all claims verifiable? Use read-only commands to verify.
+- Are there internal inconsistencies?
+- Are there stale references?
+- Is anything missing?
+
+**Write findings** into `.cowork/tasks/{TASK_ID}/{STAGE_FOLDER}/review.md` using the entry format from `.agent.default/reviewer/ROLE.md` → "Entry Format".
+
+Do NOT modify any other file.
+</file>
+
+<file path=".cowork/tasks/README.md">
+# Tasks — All Work Lives Here
+
+> Every task gets its own folder under `.cowork/tasks/`.
+
+## Naming Convention
+
+```
+NNN_short_description/
+```
+
+Examples:
+- `001_auth_service/`
+- `002_redis_migration/`
+- `003_ui_dashboard/`
+- `004_codebase_review/`
+
+## Task Structure
+
+Each task folder contains:
+
+```
+NNN_name/
+├── TASK.md                    ← What to build (human defines)
+├── STATE.yaml                 ← Gate control (copy from HARNESS_SPEC.md)
+├── TIMELINE.md                ← Event log (append-only)
+│
+├── 01_planning/
+│   ├── spec.md                ← Scope, schedule, risks
+│   └── review.md              ← Review findings
+│
+├── 02_architecture/
+│   ├── spec.md                ← System design, data flow
+│   └── review.md
+│
+├── 03_structure/
+│   ├── spec.md                ← Files, classes, functions
+│   └── review.md
+│
+├── 04_implementation/
+│   ├── spec.md                ← Code plan
+│   ├── review.md
+│   └── result.md              ← What was built
+│
+└── evidence/
+    ├── tests.md               ← Raw test output
+    ├── changed_files.md       ← Files changed + why
+    └── verification.md        ← Final verification
+```
+
+## Creating a Task
+
+1. Create folder: `.cowork/tasks/NNN_short_name/`
+2. Create `TASK.md` with the task definition
+3. Create `STATE.yaml` from the template in `.cowork/HARNESS_SPEC.md`
+4. Create `TIMELINE.md` with the first entry
+5. Create stage folders: `01_planning/`, `02_architecture/`, `03_structure/`, `04_implementation/`
+6. Create `evidence/` folder
+7. Start working on `01_planning/spec.md`
+
+## Closing a Task
+
+1. Write `04_implementation/result.md`
+2. Fill `evidence/tests.md`, `evidence/changed_files.md`, `evidence/verification.md`
+3. Update `STATE.yaml`: `task_status: complete`
+4. Human verifies → `task_status: verified`
+5. Promote specs to `docs/specs/` if they add permanent knowledge
+6. Human closes → `task_status: closed`
+</file>
+
+<file path=".github/workflows/bootstrap.yml">
+name: Bootstrap Harness
+
+# Triggers on any push to main — runtime check handles idempotency
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    # Skip if this is the template repo itself
+    if: github.repository != 'KustodyFi/agent-harness-template'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check if already bootstrapped
+        id: check
+        run: |
+          if [ ! -f "README.template.md" ]; then
+            echo "already_bootstrapped=true" >> $GITHUB_OUTPUT
+          else
+            echo "already_bootstrapped=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Bootstrap harness
+        if: steps.check.outputs.already_bootstrapped == 'false'
+        env:
+          REPO_NAME: ${{ github.event.repository.name }}
+          REPO_DESC: ${{ github.event.repository.description }}
+        run: |
+          # Derive values from env (safe — no shell interpolation of user input)
+          PROJECT_NAME=$(echo "$REPO_NAME" | sed 's/-/ /g' | sed 's/\b\w/\u&/g')
+          PROJECT_NAME_LOWER=$(echo "$REPO_NAME" | tr '[:upper:]' '[:lower:]')
+          PROJECT_DESCRIPTION="${REPO_DESC:-A KustodyFi project}"
+          TECH_STACK="TBD"
+          CURRENT_PHASE="Phase 1 — Foundation"
+          DATE=$(date +%Y-%m-%d)
+
+          # Escape for sed
+          escape_sed() {
+            printf '%s' "$1" | sed 's/[\/&\\]/\\&/g'
+          }
+
+          PROJECT_NAME_ESC=$(escape_sed "$PROJECT_NAME")
+          PROJECT_NAME_LOWER_ESC=$(escape_sed "$PROJECT_NAME_LOWER")
+          PROJECT_DESCRIPTION_ESC=$(escape_sed "$PROJECT_DESCRIPTION")
+          TECH_STACK_ESC=$(escape_sed "$TECH_STACK")
+          CURRENT_PHASE_ESC=$(escape_sed "$CURRENT_PHASE")
+
+          # Replace placeholders
+          for file in AGENTS.md agent.project.md README.template.md .cowork/STATUS.md .agent.default/shared/log.md; do
+            if [ -f "$file" ]; then
+              sed -i "s/{{PROJECT_NAME}}/$PROJECT_NAME_ESC/g" "$file"
+              sed -i "s/{{PROJECT_NAME_LOWER}}/$PROJECT_NAME_LOWER_ESC/g" "$file"
+              sed -i "s/{{PROJECT_DESCRIPTION}}/$PROJECT_DESCRIPTION_ESC/g" "$file"
+              sed -i "s/{{TECH_STACK}}/$TECH_STACK_ESC/g" "$file"
+              sed -i "s/{{CURRENT_PHASE}}/$CURRENT_PHASE_ESC/g" "$file"
+              sed -i "s/{{DATE}}/$DATE/g" "$file"
+            fi
+          done
+
+          # Swap README
+          mv README.template.md README.md
+
+          # Bootstrap .agent/ from .agent.default/
+          if [ ! -d ".agent" ]; then
+            cp -r .agent.default .agent
+          fi
+
+          # Remove this workflow (self-destruct)
+          rm -f .github/workflows/bootstrap.yml
+          # Clean up .github if empty
+          rmdir .github/workflows 2>/dev/null || true
+          rmdir .github 2>/dev/null || true
+
+          echo "✅ Harness bootstrapped for: $PROJECT_NAME"
+
+      - name: Commit bootstrap
+        if: steps.check.outputs.already_bootstrapped == 'false'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore: auto-bootstrap harness from template
+
+          - Replaced all {{PLACEHOLDER}} values from repo metadata
+          - Swapped README.template.md → README.md
+          - Bootstrapped .agent/ from .agent.default/
+          - Removed bootstrap workflow (one-time use)"
+          git push
+</file>
+
+<file path="docs/guides/getting-started.md">
+# Getting Started — New Repository Setup
+
+> **Audience:** Any developer creating a new KustodyFi repository.
+> This guide walks you through creating a repo with the agent harness from scratch.
+
+---
+
+## Prerequisites
+
+- GitHub account with access to the [KustodyFi](https://github.com/KustodyFi) organization
+- Git installed locally
+- (Optional) [GitHub CLI](https://cli.github.com/) installed for command-line setup
+
+---
+
+## Step 1: Create Your Repository
+
+### Via GitHub UI (recommended)
+
+1. Go to **[agent-harness-template](https://github.com/KustodyFi/agent-harness-template)**
+2. Click the green **"Use this template"** → **"Create a new repository"**
+3. Fill in:
+   - **Owner:** `KustodyFi`
+   - **Repository name:** your project name (e.g., `fx-town`, `invoice-engine`)
+   - **Description:** one-line project description
+   - **Visibility:** Public or Private
+4. Click **"Create repository"**
+
+### Via GitHub CLI
+
+```bash
+gh repo create KustodyFi/your-project-name \
+  --template KustodyFi/agent-harness-template \
+  --public \
+  --description "Your project description" \
+  --clone
+cd your-project-name
+```
+
+---
+
+## Step 2: Wait for Auto-Bootstrap (≈30 seconds)
+
+A GitHub Action automatically runs on the first push and:
+
+- ✅ Replaces all `{{PLACEHOLDER}}` values using your repo name and description
+- ✅ Swaps `README.template.md` → `README.md` (your project README)
+- ✅ Commits the changes
+- ✅ Deletes itself (one-time use)
+
+**How to verify it ran:**
+
+1. Go to your repo on GitHub → **Actions** tab
+2. You should see a completed **"Bootstrap Harness"** workflow run
+3. Check the commit history — you should see a commit from `github-actions[bot]`
+
+> **⚠️ If the Action didn't run:** You can bootstrap manually instead (see Step 2b below).
+
+---
+
+## Step 2b: Manual Bootstrap (fallback)
+
+Only use this if the GitHub Action did not run:
+
+```bash
+git clone git@github.com:KustodyFi/your-project-name.git
+cd your-project-name
+./setup.sh
+```
+
+The script will prompt you for:
+- Project name
+- Project description
+- Tech stack
+- Current phase
+
+Then commit and push:
+
+```bash
+git add -A
+git commit -m "chore: bootstrap harness"
+git push
+```
+
+---
+
+## Step 3: Clone and Configure
+
+```bash
+# If you haven't already cloned
+git clone git@github.com:KustodyFi/your-project-name.git
+cd your-project-name
+
+# Pull the bootstrap commit (if created via GitHub UI)
+git pull
+```
+
+### 3a. Set up local agent roles
+
+```bash
+# Copy default roles to your local (gitignored) working copy
+# Skip this if setup.sh already ran locally
+cp -r .agent.default .agent
+```
+
+### 3b. Fill in project invariants
+
+Open `agent.project.md` and replace the `{{INVARIANT_*}}` placeholders with your project's architectural rules. Examples:
+
+```markdown
+* **All API responses use JSON with camelCase keys**
+* **PostgreSQL is the only persistence layer**
+* **Every service must have health check endpoints**
+* **No direct database access from API handlers — use repository pattern**
+* **All secrets come from environment variables, never hardcoded**
+```
+
+### 3c. Update tech stack
+
+If auto-bootstrapped, the tech stack will say "TBD". Update it in `AGENTS.md`:
+
+```markdown
+**Tech stack:** Python 3.11 · FastAPI · PostgreSQL · Redis · Docker
+```
+
+### 3d. Customize coding standards
+
+Review and adjust `docs/standards/coding-standards.md` for your project's language and framework.
+
+---
+
+## Step 4: Verify Your Setup
+
+Run through this checklist:
+
+| Check | How | Expected |
+|-------|-----|----------|
+| README has project name | Open `README.md` | Your project name, not `{{PROJECT_NAME}}` |
+| AGENTS.md has project name | Open `AGENTS.md` | Your project name in header |
+| STATUS.md has date | Open `.cowork/STATUS.md` | Today's date |
+| `.agent/` exists locally | `ls .agent/` | `orchestrator/`, `reviewer/`, `shared/` |
+| `.agent/` is gitignored | `git status` | `.agent/` should NOT appear |
+| No remaining placeholders | `grep -rn '{{PROJECT' .` | No results (only `{{INVARIANT_*}}` is OK) |
+
+---
+
+## Step 5: Start Working
+
+See `AGENTS.md` → "Startup Sequence" for the authoritative boot order that your AI agent follows on startup.
+
+### Creating your first task
+
+See `.cowork/tasks/README.md` for the canonical task folder structure, creation steps, and closing procedure.
+
+---
+
+## Repo Structure After Setup
+
+```
+your-project/
+├── AGENTS.md                ← AI agent entry point (read first)
+├── agent.md                 ← Org-wide rules (§1-§10)
+├── agent.project.md         ← YOUR project invariants
+├── README.md                ← Project README
+│
+├── docs/
+│   ├── standards/           ← Coding standards
+│   ├── specs/               ← Verified specs (anti-hallucination)
+│   ├── adr/                 ← Architecture decision records
+│   ├── plans/               ← Roadmap & backlog
+│   └── guides/              ← How-to guides
+│
+├── .agent.default/          ← Role defaults (tracked, shared)
+├── .agent/                  ← Your local roles (gitignored)
+│
+└── .cowork/                 ← Process harness
+    ├── HARNESS_SPEC.md      ← Task-stage rules
+    ├── ONBOARD.md           ← Role interaction guide
+    ├── STATUS.md            ← Project dashboard
+    ├── harness/             ← State machine, validator
+    ├── prompts/             ← Agent prompt templates
+    ├── tasks/               ← All task work
+    └── reviews/             ← Cross-cutting reviews
+```
+
+---
+
+## FAQ
+
+### Q: What if I need to change the project name later?
+
+Run `grep -rn 'OldName' .` to find all occurrences, then find-and-replace. The name appears in `AGENTS.md`, `README.md`, `.cowork/STATUS.md`, and `.agent.default/shared/log.md`.
+
+### Q: Can I add custom workflows?
+
+Yes. Add new `.md` files to `.agent.default/orchestrator/workflows/`. After adding, run `cp -r .agent.default .agent` to refresh your local copy (or just copy the new file to `.agent/orchestrator/workflows/`).
+
+### Q: What if I want to skip the harness for a quick prototype?
+
+You don't have to use tasks. The harness is there when you need structured multi-stage work. For quick prototyping, just write code normally — the `agent.md` rules and `docs/standards/` still apply.
+
+### Q: How do I onboard a reviewer agent?
+
+Use the prompt template in `.cowork/prompts/onboard_agent.md`. Copy it and send to your reviewer (Codex, GPT, Gemini).
+
+### Q: Where do I report issues with the template?
+
+Open an issue on [KustodyFi/agent-harness-template](https://github.com/KustodyFi/agent-harness-template/issues).
+</file>
+
+<file path="agent.md">
+# KustodyFi Agent Policy
+
+> **Organization-wide rules for all AI development agents.**
+> This file is the same across all KustodyFi repositories.
+> It references only `AGENTS.md` (exists in every repo) — no other path references.
+>
+> **Startup:** Read `AGENTS.md` first, then this file.
+> See `AGENTS.md` for the full startup sequence.
+
+## 1. Human-Gated Design Workflow
+
+For **major changes** (new sprints, architecture changes, multi-file features), follow these four gates in order. Do not self-advance. Wait for explicit human approval at each gate.
+
+1. **Architecture** — Problem, scope, non-goals, affected modules, alternatives, proposed approach, risks.
+2. **Data Diagram** — Data/event/state flow, inputs/outputs, schema changes, failure paths, external boundaries.
+3. **Function-Level Structure** — Files to create/modify, function signatures, call flow, constants, error plan, test cases.
+4. **Coding & Verification** — Implement the smallest correct diff, run tests, report results.
+
+**FAST PATH:** When the human explicitly says "just do it" or the task is trivially small (< 3 files, no architecture change), skip gates 1–3 and go directly to coding.
+
+### Cowork Harness Override
+
+If the repo uses the cowork harness, its rules override FAST PATH:
+- Do NOT use FAST PATH for harness tasks.
+- Do NOT skip any stage.
+- Coding starts ONLY when the harness gate allows it.
+- See the harness spec for the full process.
+
+## 2. Turn Budget & Execution Rules
+
+* [DO] When starting a task, issue all `Read` calls for the necessary files in parallel first.
+* [DO] Only after all reading and analysis is complete, issue all `Write` calls in parallel.
+* [DON'T] Do not mix reading and writing across multiple alternating turns.
+* [DO] Search before writing — use `grep` to check if a pattern already exists before creating new utilities.
+* [DO] Use surgical edits (SEARCH/REPLACE). NEVER rewrite an entire file if changing a few lines.
+* [DON'T] No lazy placeholders like `// ... existing code ...` or `# rest of function`.
+
+## 3. Context Isolation
+
+* [DON'T] Do not read or tail logs/outputs from modules you are not actively working on unless explicitly requested. Prevent context pollution.
+
+## 4. Scope Discipline
+
+* [DON'T] Do not refactor unrelated code without explicit human approval.
+* [DON'T] Do not expand scope beyond the approved design.
+* [DO] Stay within the current engineering phase/sprint unless the human explicitly expands scope.
+
+## 5. Chain of Thought (CoT)
+
+* [DO] Before making architectural decisions, reason internally.
+* [DO] When emitting final code or file writes, output only clean code. No reasoning commentary in source files.
+* [DON'T] Do not inject markdown artifacts, analysis blocks, or CoT commentary into source files.
+
+## 6. Evaluation-Driven Loop
+
+* [DO] After writing or modifying code, execute the relevant test suite to verify it works.
+* [DO] Report results using explicit states:
+  - `VERIFIED` — tests ran and passed.
+  - `PARTIALLY VERIFIED` — some tests passed, others could not be run (e.g., external dependency offline).
+  - `VERIFICATION IMPOSSIBLE` — environment constraints prevent testing.
+* [DON'T] Never falsely claim a test passed, hide failed checks, or manipulate results.
+* [DON'T] Never remove assertions to force success.
+* [DO] **3-Strike Rule:** If code fails tests 3 times in a row, STOP. Do not blindly guess. Revert the file, state the error, ask the user for guidance.
+
+## 7. Operational Process
+
+* [DO] When blocked by permission, network, or tooling: **STOP immediately.** State the blocker. Ask the human. Do NOT retry with workarounds.
+* [DO] When moving or deleting files, update ALL references in the **same commit**. Run `grep -rn "old/path"` to find all references before committing.
+* [DO] Commit after each logical unit of work. Push is the human's responsibility — never retry a failed push.
+* [DON'T] Never duplicate content across files. One source of truth + pointers everywhere else.
+* [DON'T] Never create a new file for content that already exists elsewhere. Search first.
+
+## 8. Logging & Version Control
+
+* [DO] Use conventional commit messages: `type(scope): description` (e.g., `fix(api): handle null response`).
+* [DO] One logical change per commit. Do not bundle unrelated changes.
+* [DON'T] Never force-push. Never rewrite git history without human approval.
+* [DON'T] Never commit generated files, build artifacts, or IDE state.
+
+## 9. Secrets & Security
+
+* [DON'T] Never embed secrets, API keys, or credentials in code, fixtures, logs, or docs.
+* [DON'T] Never create or recommend `.env` files.
+* [DO] Read credentials from `os.environ` at runtime.
+* [DO] Every new runtime capability must either call an existing security hook or document where the hook point will be inserted.
+
+## 10. Standards
+
+For coding rules, see the project's coding standards (referenced in `AGENTS.md`).
+</file>
+
+<file path="README.template.md">
+# {{PROJECT_NAME}}
+
+{{PROJECT_DESCRIPTION}}
+
+## Quick Start
+
+```bash
+# Clone the repo
+git clone <repo-url>
+cd {{PROJECT_NAME_LOWER}}
+
+# Pull latest (in case auto-bootstrap ran)
+git pull
+
+# Set up local agent roles (if not already present)
+cp -r .agent.default .agent
+
+# Read AGENTS.md for the full startup sequence
+```
+
+> **Note:** If `{{PLACEHOLDER}}` values remain in any files, run `./setup.sh` as a fallback.
+
+## Tech Stack
+
+{{TECH_STACK}}
+
+## Project Structure
+
+```
+├── AGENTS.md                ← AI agent entry point
+├── agent.md                 ← Org-wide agent policy
+├── agent.project.md         ← Project-specific rules
+├── docs/                    ← Documentation
+│   ├── standards/           ← Coding standards
+│   ├── specs/               ← Verified project specs
+│   ├── adr/                 ← Architecture decisions
+│   ├── plans/               ← Roadmap & backlog
+│   └── guides/              ← How-to guides
+├── .agent.default/          ← Default AI role definitions
+└── .cowork/                 ← Multi-agent harness
+```
+
+## AI Agent Harness
+
+This project uses the [KustodyFi Agent Harness](https://github.com/KustodyFi/agent-harness-template) for structured AI-assisted development. See `AGENTS.md` for details.
+
+## License
+
+<!-- Add your license here -->
+</file>
+
+<file path=".cowork/prompts/approve_stage.md">
+# Prompt: Approve a Stage (HIL)
+
+Quick-approval template for the human:
+
+---
+
+Use the human approval entry format from `.cowork/ONBOARD.md` → "Attribution Format".
+
+**After approving:** See `.cowork/HARNESS_SPEC.md` → "Gate Rules" for the canonical stage transition process.
+</file>
+
+<file path=".cowork/HARNESS_SPEC.md">
+# Harness Specification — Task Stage Process
+
+> **Authoritative process rules for task execution.**
+> This file defines the stage workflow, gate rules, and evidence requirements.
+
+---
+
+## Task Stages
+
+Every task follows four stages. No stage may be skipped.
+
+```
+01_planning → 02_architecture → 03_structure → 04_implementation
+```
+
+| Stage | What | Deliverable |
+|-------|------|------------|
+| **01_planning** | Scope, schedule, risks, non-goals | `spec.md` |
+| **02_architecture** | System design, data flow, boundaries | `spec.md` |
+| **03_structure** | Files, classes, functions, call flow | `spec.md` |
+| **04_implementation** | Code plan, actual code, tests | `spec.md` + `result.md` |
+
+---
+
+## Stage Workflow
+
+```
+Orchestrator writes spec.md
+       │
+       ▼
+Human requests review ──► Reviewer reads + appends to review.md
+       │
+       ▼
+Orchestrator revises spec.md based on findings
+       │
+       ▼
+Human: APPROVED ──► advance to next stage
+  or: CHANGES REQUESTED ──► repeat review loop
+```
+
+---
+
+## Gate Rules
+
+1. **No skipping.** Stages must proceed in order: 01 → 02 → 03 → 04.
+2. **No coding before 04.** `coding_allowed` is `false` until Stage 04 is approved and status transitions to `coding`.
+3. **Human approval required.** Only the human can advance a stage.
+4. **Review before approval.** Each stage must have at least one review round.
+5. **Append-only reviews.** Never delete review entries.
+
+---
+
+## STATE.yaml
+
+Each task has a `STATE.yaml` that tracks the current position:
+
+```yaml
+task: "NNN_task_name"
+task_status: active
+current_stage: planning
+current_stage_status: pending
+coding_allowed: false
+
+stages:
+  planning:
+    status: pending
+    review_rounds: 0
+  architecture:
+    status: pending
+    review_rounds: 0
+  structure:
+    status: pending
+    review_rounds: 0
+  implementation:
+    status: pending
+    review_rounds: 0
+```
+
+Valid statuses: `pending` → `in_review` → `changes_requested` → `approved`
+Implementation adds: `coding` → `complete`
+
+---
+
+## Evidence Requirements
+
+Before a task can be closed, these files must exist:
+
+```
+evidence/
+├── tests.md           ← Raw test output
+├── changed_files.md   ← Every file changed + why
+└── verification.md    ← Final verification summary
+```
+
+---
+
+## Validation
+
+```bash
+# Requires: pip install pyyaml
+python3 .cowork/harness/validate_state.py .cowork/tasks/NNN_name/STATE.yaml
+```
+
+See `.cowork/harness/state_machine.yaml` → `validated_rules` for the full list of enforced invariants.
+</file>
+
+<file path=".cowork/README.md">
+# Cowork Harness — Process Mechanics
+
+> **What this folder is.** `.cowork/` is the multi-agent collaboration harness (Layer 3).
+> For the big picture, see `AGENTS.md`.
+
+---
+
+## Purpose
+
+`.cowork/` manages the structured workflow for AI-assisted development:
+
+- **Tasks** — all work units with staged deliverables
+- **Reviews** — shared communication between agents
+- **Harness** — machine-readable process definitions
+- **Prompts** — templates for agent interactions
+
+---
+
+## Task Structure
+
+See `.cowork/tasks/README.md` for the canonical task folder structure and deliverables.
+
+---
+
+## Attribution Format
+
+See `.cowork/ONBOARD.md` → "Attribution Format" for the canonical entry format.
+
+---
+
+## Validation
+
+```bash
+# Requires: pip install pyyaml (or activate project venv)
+python3 .cowork/harness/validate_state.py .cowork/tasks/NNN_name/STATE.yaml
+```
+
+See `.cowork/harness/state_machine.yaml` → `validated_rules` for the full list of enforced invariants.
+</file>
+
+<file path=".gitignore">
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Agent (per-user, local copy)
+/.agent/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+.env.*
+*.pem
+*.key
+
+# Build
+dist/
+build/
+*.egg-info/
+
+# Evidence (root-level only — task evidence in .cowork/tasks/ must be tracked)
+/evidence/
+
+# Development tracking (local only — NOT shipped with template)
+# Task folders are created per-project, not part of the template
+.cowork/tasks/[0-9]*/
+# Round-specific review prompts are dev artifacts
+.cowork/prompts/r[0-9]*_*.md
+</file>
+
+<file path=".cowork/harness/state_machine.yaml">
+# State Machine — Valid stage transitions
+# Defines the allowed flow through task stages
+
+initial_state: planning
+
+states:
+  planning:
+    statuses: [pending, in_review, changes_requested, approved]
+    transitions:
+      approved: architecture
+    invariants:
+      - coding_allowed must be false
+
+  architecture:
+    statuses: [pending, in_review, changes_requested, approved]
+    requires: [planning.approved]
+    transitions:
+      approved: structure
+    invariants:
+      - coding_allowed must be false
+
+  structure:
+    statuses: [pending, in_review, changes_requested, approved]
+    requires: [planning.approved, architecture.approved]
+    transitions:
+      approved: implementation
+    invariants:
+      - coding_allowed must be false
+
+  implementation:
+    statuses: [pending, in_review, changes_requested, approved, coding, complete]
+    requires: [planning.approved, architecture.approved, structure.approved]
+    transitions:
+      approved: coding
+      coding: complete
+    invariants:
+      - coding_allowed becomes true only when status is coding or complete
+
+terminal_states:
+  - complete
+
+# Task-level transitions
+task_lifecycle:
+  - active          # task is being worked on
+  - complete        # all stages done, evidence written
+  - verified        # human has verified
+  - closed          # published to docs/, task done
+
+# Validation rules (enforced by validate_state.py)
+validated_rules:
+  - only one stage may be active at a time
+  - no stage may be skipped (prerequisites must be approved)
+  - future stages must be pending
+  - coding_allowed is false until implementation stage reaches 'coding' status
+  - current_stage_status must match stages[current_stage].status
+  - approved stages require review_rounds >= 1, approved_by, and approved_date
+  - task cannot close/complete without evidence files
+  - task cannot close/complete without all stages completed
+
+# Process rules (not machine-checkable from STATE.yaml)
+# See .cowork/HARNESS_SPEC.md → "Gate Rules" for the canonical list
+</file>
+
+<file path=".cowork/harness/state.schema.json">
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Task STATE.yaml Schema",
+  "description": "Structural schema for STATE.yaml. Full semantic validation is in validate_state.py.",
+  "type": "object",
+  "required": ["task", "current_stage", "current_stage_status", "coding_allowed", "stages"],
+  "properties": {
+    "task": { "type": "string" },
+    "task_status": { "type": "string", "enum": ["active", "complete", "verified", "closed"] },
+    "current_stage": { "type": "string", "enum": ["planning", "architecture", "structure", "implementation"] },
+    "current_stage_status": {
+      "type": "string",
+      "enum": ["pending", "in_review", "changes_requested", "approved", "coding", "complete"],
+      "description": "coding and complete are only valid when current_stage is implementation (enforced by validate_state.py)"
+    },
+    "coding_allowed": { "type": "boolean" },
+    "stages": {
+      "type": "object",
+      "required": ["planning", "architecture", "structure", "implementation"],
+      "properties": {
+        "planning": { "$ref": "#/definitions/standard_stage" },
+        "architecture": { "$ref": "#/definitions/standard_stage" },
+        "structure": { "$ref": "#/definitions/standard_stage" },
+        "implementation": { "$ref": "#/definitions/implementation_stage" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "definitions": {
+    "standard_stage": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": { "type": "string", "enum": ["pending", "in_review", "changes_requested", "approved"] },
+        "review_rounds": { "type": "integer", "minimum": 0 },
+        "approved_by": { "type": "string", "description": "Required when status is 'approved' (enforced by validate_state.py)" },
+        "approved_date": { "type": "string", "description": "Required when status is 'approved' (enforced by validate_state.py)" }
+      }
+    },
+    "implementation_stage": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": { "type": "string", "enum": ["pending", "in_review", "changes_requested", "approved", "coding", "complete"] },
+        "review_rounds": { "type": "integer", "minimum": 0 },
+        "approved_by": { "type": "string", "description": "Required when status is 'approved' (enforced by validate_state.py)" },
+        "approved_date": { "type": "string", "description": "Required when status is 'approved' (enforced by validate_state.py)" }
+      }
+    }
+  },
+  "additionalProperties": false
+}
+</file>
+
+<file path=".cowork/ONBOARD.md">
+# Onboarding Guide — Process Interaction
+
+> **Startup:** Read `AGENTS.md` first.
+> See `AGENTS.md` for the authoritative startup sequence.
+>
+> This file describes how each role interacts with the harness process.
+> For role identity, skills, and limits, see `.agent/{role}/ROLE.md` (Layer 2).
+
+---
+
+## Quality Standards
+
+See the project's coding standards (referenced in `AGENTS.md` folder map).
+See `agent.md` for operational rules.
+
+---
+
+> **Note:** These sections describe how each role interacts with the harness process.
+> For role identity, skills, and limits, see `.agent/{role}/ROLE.md` (Layer 2).
+
+## Role: Human (HIL)
+
+**What you do in the harness:**
+
+1. Define tasks by creating `TASK.md`
+2. Request reviews by sending prompts to reviewer agents
+3. Approve or reject stage deliverables
+4. Close tasks after verification
+
+**Entry format:** See "Attribution Format" below.
+
+---
+
+## Role: Orchestrator
+
+**What you do in the harness:**
+
+1. Read the active task: `.cowork/tasks/NNN/TASK.md`
+2. Check the gate: `.cowork/tasks/NNN/STATE.yaml`
+3. Write `spec.md` for the current stage
+4. Prepare reviewer prompts (use `.cowork/prompts/review_stage.md`)
+5. Incorporate reviewer feedback into `spec.md`
+6. Update `STATE.yaml` when human approves
+7. Log events in `TIMELINE.md`
+8. At Stage 04, write code and produce evidence
+
+**Entry format:** See "Attribution Format" below.
+
+---
+
+## Role: Reviewer
+
+**What you do in the harness:**
+
+1. Receive context from orchestrator (via human)
+2. Read `spec.md` in the active stage
+3. Verify claims with read-only commands
+4. Append findings to `review.md`
+5. State verdict: PASS / PASS WITH NOTES / NEEDS REVISION
+
+**Entry format:** See "Attribution Format" below.
+
+---
+
+## Attribution Format
+
+Every `review.md` entry has attribution:
+
+```markdown
+### orchestrator: {title}
+**Date:** YYYY-MM-DD
+**Agent:** {ide-name} ({model})
+
+### agent: {title}
+**Date:** YYYY-MM-DD
+**Agent:** codex | gpt | gemini
+**Mode:** terminal | chat | deep-research
+
+### human: {title}
+**Date:** YYYY-MM-DD
+**Status:** APPROVED | CHANGES REQUESTED
+**Source:** chat
+**Human instruction:** "{exact quote}"
+```
+
+---
+
+## Critical Rules
+
+See `.cowork/HARNESS_SPEC.md` → "Gate Rules" for the canonical process rules.
+See `agent.md` §1 (human-gated workflow) and §7 (operational process) for operational rules.
+
+---
+
+## Creating a New Task
+
+See `.cowork/tasks/README.md` for the canonical task folder structure.
+
+---
+
+## Closing a Task
+
+See `.cowork/tasks/README.md` → "Closing a Task" for the canonical close procedure.
+</file>
+
+<file path="setup.sh">
+#!/bin/bash
+# Agent Harness Template — First-Run Setup
+# This script initializes the harness for your project.
+
+set -e
+
+echo ""
+echo "🔧 Agent Harness Template — Setup"
+echo "=================================="
+echo ""
+
+# Collect project info
+read -p "Project name (e.g., FX-Town): " PROJECT_NAME
+read -p "Project description: " PROJECT_DESCRIPTION
+read -p "Tech stack (e.g., Python 3.11 · Redis · Docker): " TECH_STACK
+read -p "Current phase (e.g., Phase 1 — Foundation): " CURRENT_PHASE
+
+PROJECT_NAME_LOWER=$(echo "$PROJECT_NAME" | tr '[:upper:]' '[:lower:]' | tr ' ' '-')
+DATE=$(date +%Y-%m-%d)
+
+# Escape special characters for sed replacement strings
+escape_sed() {
+  printf '%s' "$1" | sed 's/[\/&\\]/\\&/g'
+}
+
+PROJECT_NAME_ESC=$(escape_sed "$PROJECT_NAME")
+PROJECT_NAME_LOWER_ESC=$(escape_sed "$PROJECT_NAME_LOWER")
+PROJECT_DESCRIPTION_ESC=$(escape_sed "$PROJECT_DESCRIPTION")
+TECH_STACK_ESC=$(escape_sed "$TECH_STACK")
+CURRENT_PHASE_ESC=$(escape_sed "$CURRENT_PHASE")
+
+echo ""
+echo "📝 Applying to template files..."
+
+# OS-portable sed in-place: macOS uses `sed -i ''`, Linux uses `sed -i`
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  SED_INPLACE=(sed -i '')
+else
+  SED_INPLACE=(sed -i)
+fi
+
+# Replace placeholders in templated files
+for file in AGENTS.md agent.project.md README.template.md .cowork/STATUS.md .agent.default/shared/log.md; do
+  if [ -f "$file" ]; then
+    "${SED_INPLACE[@]}" "s/{{PROJECT_NAME}}/$PROJECT_NAME_ESC/g" "$file"
+    "${SED_INPLACE[@]}" "s/{{PROJECT_NAME_LOWER}}/$PROJECT_NAME_LOWER_ESC/g" "$file"
+    "${SED_INPLACE[@]}" "s/{{PROJECT_DESCRIPTION}}/$PROJECT_DESCRIPTION_ESC/g" "$file"
+    "${SED_INPLACE[@]}" "s/{{TECH_STACK}}/$TECH_STACK_ESC/g" "$file"
+    "${SED_INPLACE[@]}" "s/{{CURRENT_PHASE}}/$CURRENT_PHASE_ESC/g" "$file"
+    "${SED_INPLACE[@]}" "s/{{DATE}}/$DATE/g" "$file"
+  fi
+done
+
+# Swap template README → project README
+if [ -f "README.template.md" ]; then
+  mv README.template.md README.md
+  echo "✅ README.template.md → README.md (project README)"
+fi
+
+# Remove auto-bootstrap workflow (manual setup replaces it)
+if [ -f ".github/workflows/bootstrap.yml" ]; then
+  rm -f .github/workflows/bootstrap.yml
+  rmdir .github/workflows 2>/dev/null || true
+  rmdir .github 2>/dev/null || true
+  echo "✅ Removed bootstrap.yml (not needed after manual setup)"
+fi
+
+echo "✅ Placeholders replaced"
+
+# Bootstrap .agent/ from .agent.default/
+if [ ! -d ".agent" ]; then
+  cp -r .agent.default .agent
+  echo "✅ Copied .agent.default/ → .agent/ (your local working copy)"
+else
+  echo "⚠️  .agent/ already exists — skipping copy"
+fi
+
+echo ""
+echo "🎉 Harness initialized for $PROJECT_NAME"
+echo ""
+echo "Next steps:"
+echo "  1. Edit agent.project.md — fill in your architectural invariants"
+echo "  2. Read AGENTS.md — your AI agent entry point"
+echo "  3. Start working!"
+echo ""
+</file>
+
+<file path=".cowork/harness/validate_state.py">
+#!/usr/bin/env python3
+"""
+Validate a task's STATE.yaml against harness invariants.
+
+Usage:
+    python3 .cowork/harness/validate_state.py .cowork/tasks/NNN_name/STATE.yaml
+
+Requires: pip install pyyaml
+"""
+
+import sys
+import yaml
+from pathlib import Path
+
+
+VALID_STAGES = ["planning", "architecture", "structure", "implementation"]
+VALID_STATUSES = ["pending", "in_review", "changes_requested", "approved"]
+IMPLEMENTATION_STATUSES = VALID_STATUSES + ["coding", "complete"]
+VALID_TASK_STATUSES = ["active", "complete", "verified", "closed"]
+
+# Stage ordering for prerequisite checks
+STAGE_ORDER = {stage: i for i, stage in enumerate(VALID_STAGES)}
+
+
+def validate(state_path: str) -> list[str]:
+    """Validate STATE.yaml and return list of errors."""
+    errors = []
+    path = Path(state_path)
+
+    if not path.exists():
+        return [f"File not found: {state_path}"]
+
+    with open(path) as f:
+        state = yaml.safe_load(f)
+
+    # --- Required top-level fields ---
+    required = ["task", "current_stage", "current_stage_status", "coding_allowed", "stages"]
+    for field in required:
+        if field not in state:
+            errors.append(f"Missing required field: {field}")
+
+    if errors:
+        return errors
+
+    stage = state["current_stage"]
+    status = state["current_stage_status"]
+    coding = state["coding_allowed"]
+    stages = state.get("stages", {})
+
+    # --- Validate task_status if present ---
+    if "task_status" in state and state["task_status"] not in VALID_TASK_STATUSES:
+        errors.append(
+            f"Invalid task_status: '{state['task_status']}' "
+            f"(valid: {VALID_TASK_STATUSES})"
+        )
+
+    # --- Validate current_stage ---
+    if stage not in VALID_STAGES:
+        errors.append(f"Invalid current_stage: '{stage}'")
+        return errors
+
+    # --- Validate current_stage_status ---
+    allowed = IMPLEMENTATION_STATUSES if stage == "implementation" else VALID_STATUSES
+    if status not in allowed:
+        errors.append(
+            f"Invalid status '{status}' for stage '{stage}' "
+            f"(valid: {allowed})"
+        )
+
+    # --- Validate stages block has all 4 stages ---
+    for s in VALID_STAGES:
+        if s not in stages:
+            errors.append(f"Missing stage in stages block: '{s}'")
+
+    if errors:
+        return errors
+
+    # --- Validate each stage's status value ---
+    for s in VALID_STAGES:
+        stage_data = stages[s]
+        if "status" not in stage_data:
+            errors.append(f"Stage '{s}' missing 'status' field")
+            continue
+        s_allowed = IMPLEMENTATION_STATUSES if s == "implementation" else VALID_STATUSES
+        if stage_data["status"] not in s_allowed:
+            errors.append(
+                f"Stage '{s}' has invalid status '{stage_data['status']}' "
+                f"(valid: {s_allowed})"
+            )
+
+    # --- coding_allowed invariant ---
+    # coding_allowed must be false unless implementation status is 'coding' or 'complete'
+    impl_status = stages.get("implementation", {}).get("status", "pending")
+    if coding and impl_status not in ("coding", "complete"):
+        errors.append(
+            f"coding_allowed is true but implementation status is '{impl_status}' "
+            f"(must be 'coding' or 'complete')"
+        )
+    if not coding and impl_status in ("coding", "complete"):
+        errors.append(
+            f"coding_allowed is false but implementation status is '{impl_status}' "
+            f"(should be true)"
+        )
+
+    # --- current_stage_status must match stages[current_stage].status ---
+    stage_block_status = stages[stage].get("status", "pending")
+    if status != stage_block_status:
+        errors.append(
+            f"current_stage_status is '{status}' but "
+            f"stages.{stage}.status is '{stage_block_status}' (must match)"
+        )
+
+    # --- Stage ordering: no stage can be active past unapproved prerequisites ---
+    current_idx = STAGE_ORDER[stage]
+    for i in range(current_idx):
+        prior = VALID_STAGES[i]
+        prior_status = stages[prior].get("status", "pending")
+        if prior_status != "approved":
+            errors.append(
+                f"Current stage is '{stage}' but prerequisite stage "
+                f"'{prior}' has status '{prior_status}' (must be 'approved')"
+            )
+
+    # --- Future stages must be pending ---
+    for i in range(current_idx + 1, len(VALID_STAGES)):
+        future = VALID_STAGES[i]
+        future_status = stages[future].get("status", "pending")
+        if future_status != "pending":
+            errors.append(
+                f"Current stage is '{stage}' but future stage "
+                f"'{future}' has status '{future_status}' (must be 'pending')"
+            )
+
+    # --- Review rounds: approved stages must have at least 1 review round ---
+    # --- Approved stages must have approved_by and approved_date ---
+    for s in VALID_STAGES:
+        stage_data = stages[s]
+        if stage_data.get("status") == "approved":
+            rounds = stage_data.get("review_rounds", 0)
+            if rounds < 1:
+                errors.append(
+                    f"Stage '{s}' is approved but review_rounds is {rounds} "
+                    f"(must be >= 1)"
+                )
+            if not stage_data.get("approved_by"):
+                errors.append(
+                    f"Stage '{s}' is approved but missing 'approved_by' "
+                    f"(must record who approved)"
+                )
+            if not stage_data.get("approved_date"):
+                errors.append(
+                    f"Stage '{s}' is approved but missing 'approved_date' "
+                    f"(must record when approved)"
+                )
+
+    # --- Evidence check for closed/verified/complete tasks ---
+    task_status = state.get("task_status", "active")
+    if task_status in ("complete", "verified", "closed"):
+        task_dir = path.parent
+        evidence_dir = task_dir / "evidence"
+        required_evidence = ["tests.md", "changed_files.md", "verification.md"]
+        for ef in required_evidence:
+            if not (evidence_dir / ef).exists():
+                errors.append(
+                    f"task_status is '{task_status}' but evidence file "
+                    f"missing: evidence/{ef}"
+                )
+
+    # --- Task lifecycle ordering ---
+    # 'complete' = all stages done + evidence written (per state_machine.yaml)
+    # 'closed' = verified + published
+    if task_status in ("complete", "verified", "closed"):
+        for s in VALID_STAGES:
+            s_status = stages[s].get("status", "pending")
+            if s == "implementation":
+                if s_status != "complete":
+                    errors.append(
+                        f"task_status is '{task_status}' but implementation status "
+                        f"is '{s_status}' (must be 'complete')"
+                    )
+            else:
+                if s_status != "approved":
+                    errors.append(
+                        f"task_status is '{task_status}' but stage '{s}' status "
+                        f"is '{s_status}' (must be 'approved')"
+                    )
+
+    return errors
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print(f"Usage: python3 {sys.argv[0]} <STATE.yaml>")
+        sys.exit(1)
+
+    errs = validate(sys.argv[1])
+    if errs:
+        print("❌ VALIDATION FAILED:")
+        for e in errs:
+            print(f"  - {e}")
+        sys.exit(1)
+    else:
+        print("✅ STATE.yaml is valid")
+        sys.exit(0)
+</file>
+
+<file path="AGENTS.md">
+# {{PROJECT_NAME}} — AI Agent Development
+
+> How AI development agents operate in this repository.
+> Read this file first. It governs all AI agent behavior.
+
+---
+
+## Project
+
+{{PROJECT_NAME}} — {{PROJECT_DESCRIPTION}}
+
+**Tech stack:** {{TECH_STACK}}
+
+**Current phase:** {{CURRENT_PHASE}}
+
+---
+
+## Architecture (3-Layer Agent Engineering)
+
+```
+┌──────────────────────────────────────────────────────┐
+│  LAYER 3: HARNESS                     .cowork/       │
+│  Multi-agent collaboration: process, state machine,  │
+│  review logs, task tracking, approval gates,          │
+│  process permissions (who can do what per stage)      │
+├──────────────────────────────────────────────────────┤
+│  LAYER 2: ROLES                       .agent/        │
+│  Per-role identity: who you are, your skills,         │
+│  your limits, your workflows (gitignored, per-user)   │
+├──────────────────────────────────────────────────────┤
+│  LAYER 1: POLICY                      agent.md       │
+│  Org-wide rules: coding standards, logging, secrets, │
+│  human-gated workflow, evaluation loop               │
+└──────────────────────────────────────────────────────┘
+```
+
+> **This file (`AGENTS.md`) is the entry point.** It is not a layer —
+> it is the overview that tells agents where to find each layer.
+>
+> **Layer ownership:**
+> - Layer 2 (`.agent/`) owns role **identity** — who you are, your skills, your limits
+> - Layer 3 (`.cowork/`) owns **process permissions** — what each role can do per stage
+> - Layer 3 also provides process guides (ONBOARD.md) for how roles interact with the harness
+
+---
+
+## Startup Sequence (Authoritative)
+
+```
+1. Read AGENTS.md                           ← This file (overview)
+2. Read agent.md                            ← Org policy (rules §1-§10)
+3. Read agent.project.md                    ← Project invariants
+4. Read docs/standards/coding-standards.md  ← Coding rules
+5. Read docs/specs/ (if populated)          ← Ground truth
+6. Read .cowork/STATUS.md                   ← Where are we?
+7. If .agent/{your-role}/ROLE.md exists, read it  ← Optional, local
+8. Ready to work.
+```
+
+> Step 7 is optional. `.agent/` is gitignored and per-user.
+> If absent, use the role descriptions in `.cowork/ONBOARD.md`.
+
+> All other files that reference a startup sequence MUST point here.
+
+---
+
+## Team Roles
+
+| Role | Agent | Can Do | Cannot Do |
+|------|-------|--------|-----------|
+| **Human (HIL)** | You | Approve, reject, close, set direction | — |
+| **Orchestrator** | Primary IDE AI | Write specs, code, tests, commit | Approve stages, skip stages |
+| **Reviewer** | Secondary AI(s) | Review specs/code, verify claims | Write code, approve, commit |
+
+### Coordination Protocol
+
+```
+     HUMAN
+       │ chat
+       ▼
+  ORCHESTRATOR ──── review.md ────► REVIEWER
+  (writes specs)                    (appends findings)
+  (writes code)                     (read-only commands)
+  (commits)                         (never commits)
+```
+
+- Orchestrator prepares reviewer prompts → human delivers to reviewer agent
+- `review.md` is the shared communication channel (files = how agents talk)
+
+---
+
+## Commands
+
+| Command | Description |
+|---------|-------------|
+| `/commit` | Stage all changes and commit with conventional message |
+| `/push` | Push current branch to origin |
+| `/build` | Build the project |
+| `/run` | Build and run locally |
+| `/status` | Show project status and recent activity |
+| `/log` | Append a new round to the change log |
+| `/harness` | Load harness rules before starting any task |
+| `/review` | Run self-review against docs contracts |
+| `/coding-standards` | Show coding standards |
+
+---
+
+## Folder Map
+
+| Path | What | Layer |
+|------|------|-------|
+| `AGENTS.md` | This file — agent entry point | — |
+| `agent.md` | Org-wide operational rules | 1 |
+| `agent.project.md` | Project-specific invariants | 1 |
+| `docs/standards/` | Coding standards (canonical, tracked) | 1 |
+| `docs/specs/` | Verified project specs (ground truth) | 1 |
+| `docs/adr/` | Architecture decision records | 1 |
+| `docs/plans/` | Roadmap, backlog, schedule | 1 |
+| `docs/guides/` | How-to guides (demo, run, deploy) | 1 |
+| `.agent.default/` | Default role definitions (tracked baseline) | 2 |
+| `.agent/` | Active role copy (gitignored, per-user) | 2 |
+| `.cowork/STATUS.md` | Live project dashboard | 3 |
+| `.cowork/README.md` | Harness overview (Layer 3 entry point) | 3 |
+| `.cowork/HARNESS_SPEC.md` | Task-stage process rules | 3 |
+| `.cowork/ONBOARD.md` | Process guide for all roles | 3 |
+| `.cowork/harness/` | State machine, validator, permissions | 3 |
+| `.cowork/prompts/` | Prompt templates for review/approve | 3 |
+| `.cowork/tasks/` | All task work (stages, specs, reviews) | 3 |
+| `.cowork/reviews/` | Shared review logs | 3 |
+| `README.md` | Template overview (before setup) / Project README (after setup) | — |
+| `README.template.md` | Project README with placeholders (consumed by `setup.sh`) | — |
+| `setup.sh` | First-run bootstrap script (manual fallback) | — |
+| `.github/workflows/bootstrap.yml` | Auto-bootstrap on first push (self-deletes) | — |
+| `.gitignore` | Git ignore rules (`.agent/`, secrets, build artifacts) | — |
+
+---
+
+## Expectations
+
+1. **Read before writing.** Always read the startup sequence files before any work.
+2. **No code before approval.** Coding starts only after harness approval.
+3. **One source of truth.** Never duplicate content. One canonical file + pointers.
+4. **Commit after each unit.** Push is human's responsibility.
+5. **Follow agent.md.** All operational rules (stop-when-blocked, scope discipline, etc.) are in `agent.md`.
+</file>
+
+<file path="README.md">
+# Agent Harness Template
+
+> **A production-ready framework for structured AI agent development.**
+> Every KustodyFi repository uses this template to enforce human-gated, multi-agent workflows.
+
+[![Use this template](https://img.shields.io/badge/Use%20this%20template-green?style=for-the-badge)](https://github.com/KustodyFi/agent-harness-template/generate)
+
+---
+
+## Why This Exists
+
+AI agents are powerful but need guardrails. Without structure, agents:
+- Skip planning and jump straight to code
+- Hallucinate architecture decisions
+- Overwrite each other's work
+- Ship code without human review
+
+This template solves that by enforcing a **3-layer harness** that every agent must follow.
+
+---
+
+## 3-Layer Architecture
+
+See `AGENTS.md` → "Architecture" for the canonical layer definitions.
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                                                                  │
+│   LAYER 3: HARNESS                              .cowork/         │
+│                                                                  │
+│   The process engine. Controls WHAT each role can do             │
+│   at each stage. State machine, approval gates, task             │
+│   stages, review logs, prompt templates.                         │
+│                                                                  │
+│   Think: "the rules of the game"                                 │
+│                                                                  │
+├──────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│   LAYER 2: ROLES                                .agent/          │
+│                                                                  │
+│   Per-role identity. Defines WHO each agent is —                 │
+│   their skills, workflows, and limits.                           │
+│   Tracked defaults in .agent.default/, personal                  │
+│   copy in .agent/ (gitignored).                                  │
+│                                                                  │
+│   Think: "the players and their abilities"                       │
+│                                                                  │
+├──────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│   LAYER 1: POLICY                               agent.md         │
+│                                                                  │
+│   Organization-wide rules. Same in every repo.                   │
+│   Coding standards, secrets policy, human-gated                  │
+│   workflow, evaluation loop.                                     │
+│                                                                  │
+│   Think: "the law of the land"                                   │
+│                                                                  │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+**Layer separation is strict:**
+- Layer 1 never changes per-project (org-portable)
+- Layer 2 defines identity (tracked defaults + personal overrides)
+- Layer 3 defines process (what you can do, when you can do it)
+
+---
+
+## How It Works
+
+### Team Roles
+
+See `AGENTS.md` → "Team Roles" and `.cowork/harness/roles.yaml` for the canonical role definitions.
+
+```
+     HUMAN (you)
+       │
+       │  defines tasks, approves stages, closes tasks
+       │
+       ▼
+  ┌─────────────┐         review.md          ┌─────────────┐
+  │ ORCHESTRATOR │ ─────────────────────────► │  REVIEWER    │
+  │  (IDE AI)    │                            │ (External AI)│
+  │              │ ◄───────────────────────── │              │
+  │ writes specs │     findings + verdict     │ verifies     │
+  │ writes code  │                            │ read-only    │
+  │ runs tests   │                            │ never writes │
+  └─────────────┘                            └─────────────┘
+        │                                          │
+        │         human approves/rejects           │
+        └──────────────── ▲ ───────────────────────┘
+                          │
+                       HUMAN
+```
+
+See `AGENTS.md` → "Team Roles" and `.cowork/harness/roles.yaml` for the canonical role rules.
+
+### Task Lifecycle
+
+See `.cowork/HARNESS_SPEC.md` → "Task Stages" and "Gate Rules" for the canonical process rules.
+
+```
+                        TASK LIFECYCLE
+    ┌───────────────────────────────────────────────┐
+    │                                               │
+    │   01_PLANNING ──► 02_ARCHITECTURE ──►         │
+    │                                               │
+    │   03_STRUCTURE ──► 04_IMPLEMENTATION           │
+    │                                               │
+    └───────────────────────────────────────────────┘
+
+    Each stage follows the same cycle:
+
+    ┌──────────┐     ┌──────────┐     ┌──────────┐
+    │          │     │          │     │          │
+    │  WRITE   │────►│  REVIEW  │────►│ APPROVE  │
+    │  spec.md │     │ review.md│     │ (human)  │
+    │          │     │          │     │          │
+    └──────────┘     └──────────┘     └──────────┘
+    orchestrator      reviewer          human
+                                          │
+                                          ▼
+                                    Next stage
+                                    (or coding
+                                     at stage 04)
+```
+
+See `.cowork/HARNESS_SPEC.md` → "Gate Rules" for the canonical stage transition rules.
+
+### State Machine
+
+Each task has a `STATE.yaml` that tracks progress:
+
+```yaml
+task: "001_auth_service"
+task_status: active
+current_stage: planning
+current_stage_status: pending
+coding_allowed: false        # ← becomes true ONLY at stage 04 coding
+
+stages:
+  planning:
+    status: pending          # pending → in_review → approved
+    review_rounds: 0
+  architecture:
+    status: pending
+    review_rounds: 0
+  structure:
+    status: pending
+    review_rounds: 0
+  implementation:
+    status: pending          # also supports: coding, complete
+    review_rounds: 0
+```
+
+The validator (`python3 .cowork/harness/validate_state.py`) enforces all invariants.
+See `.cowork/harness/state_machine.yaml` → `validated_rules` for the full list.
+
+---
+
+## Installation
+
+### Flow Diagram
+
+```
+    ┌─────────────────────────────────────────────────────────────┐
+    │                    OPTION A: AUTOMATED                      │
+    │                                                             │
+    │  1. "Use this template"     2. GitHub Action runs           │
+    │     on GitHub                  automatically                │
+    │                                                             │
+    │  ┌─────────────┐           ┌──────────────────────┐        │
+    │  │  Click      │           │  bootstrap.yml:       │        │
+    │  │  "Use this  │──push──►  │  • repo name → vars   │        │
+    │  │  template"  │           │  • sed replacements    │        │
+    │  │             │           │  • README swap         │        │
+    │  │  Fill in:   │           │  • commit              │        │
+    │  │  • name     │           │  • self-delete ✂️      │        │
+    │  │  • desc     │           └──────────────────────┘        │
+    │  └─────────────┘                     │                     │
+    │                                      ▼                     │
+    │                          3. Clone ready-to-go repo          │
+    │                             git clone + git pull            │
+    │                                                             │
+    └─────────────────────────────────────────────────────────────┘
+
+    ┌─────────────────────────────────────────────────────────────┐
+    │                    OPTION B: MANUAL                          │
+    │                                                             │
+    │  1. Clone          2. Run setup.sh       3. Push            │
+    │                                                             │
+    │  git clone ──► ./setup.sh ──► git push                     │
+    │                 (interactive)                                │
+    │                 • project name                               │
+    │                 • description                                │
+    │                 • tech stack                                  │
+    │                 • current phase                               │
+    │                                                             │
+    └─────────────────────────────────────────────────────────────┘
+```
+
+### Option A: Automated (recommended)
+
+1. Click **"Use this template"** on GitHub, or:
+
+```bash
+gh repo create KustodyFi/your-project \
+  --template KustodyFi/agent-harness-template \
+  --public \
+  --description "Your project description" \
+  --clone
+```
+
+2. **Wait ~30 seconds.** A GitHub Action auto-bootstraps:
+   - Uses your **repo name** as project name
+   - Uses your **repo description** as project description
+   - Sets tech stack to "TBD" (you update later)
+   - Sets phase to "Phase 1 — Foundation"
+   - Swaps `README.template.md` → `README.md`
+   - **Self-destructs** after running (one-time use)
+
+3. Pull the bootstrapped repo:
+
+```bash
+cd your-project
+git pull  # get the auto-bootstrap commit
+```
+
+### Option B: Manual
+
+```bash
+git clone git@github.com:KustodyFi/your-project.git
+cd your-project
+./setup.sh    # interactive prompts
+git add -A && git commit -m "chore: bootstrap harness" && git push
+```
+
+---
+
+## Post-Setup Configuration
+
+After bootstrap (automated or manual), complete these steps:
+
+### 1. Fill in project invariants
+
+**File:** `agent.project.md`
+
+Replace the `{{INVARIANT_*}}` placeholders with your project's non-negotiable rules:
+
+```markdown
+* **All API responses use JSON with camelCase keys**
+* **PostgreSQL is the only persistence layer**
+* **Every service must have health check endpoints**
+* **No direct database access from handlers — use repository pattern**
+* **All secrets from environment variables, never hardcoded**
+```
+
+### 2. Update tech stack
+
+**File:** `AGENTS.md` (line 12)
+
+If auto-bootstrapped, replace "TBD":
+
+```markdown
+**Tech stack:** Python 3.11 · FastAPI · PostgreSQL · Redis · Docker
+```
+
+### 3. Customize coding standards
+
+**File:** `docs/standards/coding-standards.md`
+
+Adjust for your language, framework, and conventions.
+
+### 4. Set up local agent roles
+
+```bash
+# If not already done by setup.sh:
+cp -r .agent.default .agent
+```
+
+This creates your personal (gitignored) copy of the role definitions.
+
+### 5. Verify
+
+```bash
+# No remaining placeholders (INVARIANT_* is OK)
+grep -rn '{{PROJECT' . --include='*.md'
+# Should return: no results
+
+# .agent/ exists
+ls .agent/orchestrator/ROLE.md
+# Should exist
+
+# .agent/ is gitignored
+git status
+# .agent/ should NOT appear
+```
+
+---
+
+## What's Included
+
+```
+your-project/
+│
+├── AGENTS.md                    ← 🚀 AI agent entry point (read first)
+│                                   Startup sequence, architecture,
+│                                   team roles, folder map
+│
+├── agent.md                     ← 📜 Org-wide policy (§1-§10)
+│                                   Same across all KustodyFi repos
+│
+├── agent.project.md             ← 🏗️ YOUR project invariants
+│                                   Non-negotiable architectural rules
+│
+├── setup.sh                     ← ⚙️ Manual bootstrap (fallback)
+│
+├── .github/workflows/
+│   └── bootstrap.yml            ← 🤖 Auto-bootstrap (self-deletes)
+│
+├── docs/
+│   ├── standards/
+│   │   └── coding-standards.md  ← 📏 Coding rules (customize this)
+│   ├── specs/                   ← 📋 Verified specs (anti-hallucination)
+│   ├── adr/                     ← 📝 Architecture decision records
+│   ├── plans/                   ← 🗺️ Roadmap & backlog
+│   └── guides/
+│       └── getting-started.md   ← 📖 This guide, in detail
+│
+├── .agent.default/              ← 👤 Role defaults (tracked, shared)
+│   ├── orchestrator/
+│   │   ├── ROLE.md              ← Orchestrator identity + limits
+│   │   ├── skills/              ← Harness skill definitions
+│   │   └── workflows/           ← /commit, /build, /run, etc.
+│   ├── reviewer/
+│   │   ├── ROLE.md              ← Reviewer identity + limits
+│   │   └── skills/              ← Code review skill
+│   └── shared/
+│       └── log.md               ← Change log (append-only)
+│
+├── .agent/                      ← 👤 YOUR local roles (gitignored)
+│                                   Created by setup.sh or manually
+│
+└── .cowork/                     ← ⚙️ Process harness (Layer 3)
+    ├── README.md                ← Harness overview
+    ├── HARNESS_SPEC.md          ← Task stages + gate rules
+    ├── ONBOARD.md               ← Role interaction guide + attribution
+    ├── STATUS.md                ← Project dashboard
+    │
+    ├── harness/
+    │   ├── state_machine.yaml   ← Stage transitions + validated rules
+    │   ├── validate_state.py    ← STATE.yaml validator
+    │   ├── state.schema.json    ← STATE.yaml JSON schema
+    │   ├── roles.yaml           ← Canonical role capabilities
+    │   └── permissions.yaml     ← Stage-level permissions
+    │
+    ├── prompts/
+    │   ├── review_stage.md      ← Template: request a review
+    │   ├── approve_stage.md     ← Template: approve a stage
+    │   └── onboard_agent.md     ← Template: onboard a reviewer
+    │
+    ├── tasks/
+    │   └── README.md            ← Task structure + create/close guide
+    │
+    └── reviews/
+        └── README.md            ← Cross-cutting review logs
+```
+
+---
+
+## Agent Startup Sequence
+
+See `AGENTS.md` → "Startup Sequence" for the authoritative boot order.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    AGENT BOOT SEQUENCE                       │
+│                                                             │
+│  1. AGENTS.md          ← Entry point, architecture          │
+│       │                                                     │
+│  2. agent.md           ← Org-wide rules (§1-§10)           │
+│       │                                                     │
+│  3. agent.project.md   ← Project invariants                 │
+│       │                                                     │
+│  4. docs/standards/    ← Coding rules                       │
+│       │                                                     │
+│  5. docs/specs/        ← Ground truth (if populated)        │
+│       │                                                     │
+│  6. .cowork/STATUS.md  ← Where are we?                     │
+│       │                                                     │
+│  7. .agent/ROLE.md     ← Who am I? (optional, per-role)     │
+│       │                                                     │
+│  8. Ready to work      ← Agent is fully onboarded           │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Key Design Decisions
+
+| Decision | Rationale |
+|----------|-----------|
+| `AGENTS.md` owns the startup sequence | All other files point there — never define their own |
+| `agent.md` is org-portable | References only `AGENTS.md` (exists in every repo), zero other paths |
+| `.agent.default/` is tracked, `.agent/` is gitignored | Team baseline + personal overrides |
+| One source of truth | No duplicated rules — only pointers to canonical files |
+| `roles.yaml` is the canonical vocabulary | `permissions.yaml` uses the same action names |
+| Validator enforces invariants | `validate_state.py` catches violations before they reach code |
+| Bootstrap self-destructs | `bootstrap.yml` deletes itself after first run — clean repo |
+
+---
+
+## Validation
+
+```bash
+# Validate a task's STATE.yaml against all harness invariants
+# Requires: pip install pyyaml
+python3 .cowork/harness/validate_state.py .cowork/tasks/NNN_name/STATE.yaml
+```
+
+See `.cowork/harness/state_machine.yaml` → `validated_rules` for the full list of enforced invariants.
+
+---
+
+## Detailed Guide
+
+For step-by-step instructions with verification checklists, FAQ, and first-task walkthrough, see:
+
+**[`docs/guides/getting-started.md`](docs/guides/getting-started.md)**
+
+---
+
+## License
+
+MIT
+</file>
+
+</files>
