@@ -31,3 +31,9 @@ build/
 
 # Evidence (root-level only — task evidence in .cowork/tasks/ must be tracked)
 /evidence/
+
+# Development tracking (local only — NOT shipped with template)
+# Task folders are created per-project, not part of the template
+.cowork/tasks/[0-9]*/
+# Round-specific review prompts are dev artifacts
+.cowork/prompts/r[0-9]*_*.md
