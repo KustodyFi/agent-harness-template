@@ -37,3 +37,4 @@ build/
 .cowork/tasks/[0-9]*/
 # Round-specific review prompts are dev artifacts
 .cowork/prompts/r[0-9]*_*.md
+repomix-output.*
