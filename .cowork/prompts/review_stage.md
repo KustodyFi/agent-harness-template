@@ -17,6 +17,6 @@ Send this to a reviewer agent to review the current stage:
 - Are there stale references?
 - Is anything missing?
 
-**Write findings** into `.cowork/tasks/{TASK_ID}/{STAGE_FOLDER}/review.md` using the entry format from `.agent.default/reviewer/ROLE.md` → "Entry Format".
+**Write findings** into `.cowork/tasks/{TASK_ID}/{STAGE_FOLDER}/review.md` using the attribution format from `.cowork/ONBOARD.md` → "Attribution Format".
 
 Do NOT modify any other file.

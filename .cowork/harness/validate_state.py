@@ -31,7 +31,13 @@ def validate(state_path: str) -> list[str]:
         return [f"File not found: {state_path}"]
 
     with open(path) as f:
-        state = yaml.safe_load(f)
+        try:
+            state = yaml.safe_load(f)
+        except yaml.YAMLError as exc:
+            return [f"Malformed YAML: {exc}"]
+
+    if not isinstance(state, dict):
+        return ["STATE.yaml is empty or not a valid YAML mapping."]
 
     # --- Required top-level fields ---
     required = ["task", "current_stage", "current_stage_status", "coding_allowed", "stages"]
@@ -45,7 +51,7 @@ def validate(state_path: str) -> list[str]:
     stage = state["current_stage"]
     status = state["current_stage_status"]
     coding = state["coding_allowed"]
-    stages = state.get("stages", {})
+    stages = state.get("stages") or {}
 
     # --- Validate task_status if present ---
     if "task_status" in state and state["task_status"] not in VALID_TASK_STATUSES:
@@ -77,7 +83,7 @@ def validate(state_path: str) -> list[str]:
 
     # --- Validate each stage's status value ---
     for s in VALID_STAGES:
-        stage_data = stages[s]
+        stage_data = stages.get(s, {})
         if "status" not in stage_data:
             errors.append(f"Stage '{s}' missing 'status' field")
             continue
@@ -103,7 +109,7 @@ def validate(state_path: str) -> list[str]:
         )
 
     # --- current_stage_status must match stages[current_stage].status ---
-    stage_block_status = stages[stage].get("status", "pending")
+    stage_block_status = stages.get(stage, {}).get("status", "pending")
     if status != stage_block_status:
         errors.append(
             f"current_stage_status is '{status}' but "
@@ -131,26 +137,45 @@ def validate(state_path: str) -> list[str]:
                 f"'{future}' has status '{future_status}' (must be 'pending')"
             )
 
-    # --- Review rounds: approved stages must have at least 1 review round ---
-    # --- Approved stages must have approved_by and approved_date ---
+    # --- Review rounds + approval metadata ---
+    # Approved, coding, and complete stages must retain approval provenance
     for s in VALID_STAGES:
-        stage_data = stages[s]
-        if stage_data.get("status") == "approved":
+        stage_data = stages.get(s, {})
+        s_status = stage_data.get("status", "pending")
+        if s_status in ("approved", "coding", "complete"):
             rounds = stage_data.get("review_rounds", 0)
             if rounds < 1:
                 errors.append(
-                    f"Stage '{s}' is approved but review_rounds is {rounds} "
+                    f"Stage '{s}' is '{s_status}' but review_rounds is {rounds} "
                     f"(must be >= 1)"
                 )
             if not stage_data.get("approved_by"):
                 errors.append(
-                    f"Stage '{s}' is approved but missing 'approved_by' "
+                    f"Stage '{s}' is '{s_status}' but missing 'approved_by' "
                     f"(must record who approved)"
                 )
             if not stage_data.get("approved_date"):
                 errors.append(
-                    f"Stage '{s}' is approved but missing 'approved_date' "
+                    f"Stage '{s}' is '{s_status}' but missing 'approved_date' "
                     f"(must record when approved)"
+                )
+
+    # --- Review.md existence check for approved stages ---
+    task_dir = path.parent
+    stage_folders = {
+        "planning": "01_planning",
+        "architecture": "02_architecture",
+        "structure": "03_structure",
+        "implementation": "04_implementation",
+    }
+    for s in VALID_STAGES:
+        stage_data = stages.get(s, {})
+        if stage_data.get("status") in ("approved", "coding", "complete"):
+            review_path = task_dir / stage_folders[s] / "review.md"
+            if not review_path.exists():
+                errors.append(
+                    f"Stage '{s}' is '{stage_data['status']}' but "
+                    f"{stage_folders[s]}/review.md does not exist"
                 )
 
     # --- Evidence check for closed/verified/complete tasks ---

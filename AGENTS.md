@@ -38,6 +38,7 @@
 > it is the overview that tells agents where to find each layer.
 >
 > **Layer ownership:**
+> - Layer 1 (`agent.md`, `agent.project.md`, `docs/`) owns **governance** — org-wide policy (portable) + project-specific invariants (customized per-repo)
 > - Layer 2 (`.agent/`) owns role **identity** — who you are, your skills, your limits
 > - Layer 3 (`.cowork/`) owns **process permissions** — what each role can do per stage
 > - Layer 3 also provides process guides (ONBOARD.md) for how roles interact with the harness

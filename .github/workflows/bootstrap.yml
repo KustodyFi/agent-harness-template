@@ -1,9 +1,10 @@
 name: Bootstrap Harness
 
-# Triggers on any push to main — runtime check handles idempotency
+# Triggers on push to main or manual dispatch (for branch-protected repos)
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -34,7 +35,11 @@ jobs:
           # Derive values from env (safe — no shell interpolation of user input)
           PROJECT_NAME=$(echo "$REPO_NAME" | sed 's/-/ /g' | sed 's/\b\w/\u&/g')
           PROJECT_NAME_LOWER=$(echo "$REPO_NAME" | tr '[:upper:]' '[:lower:]')
-          PROJECT_DESCRIPTION="${REPO_DESC:-A KustodyFi project}"
+
+          # Strip newlines from description to prevent sed breakage (M2)
+          REPO_DESC_CLEAN=$(echo "$REPO_DESC" | tr '\n' ' ')
+          PROJECT_DESCRIPTION="${REPO_DESC_CLEAN:-A KustodyFi project}"
+
           TECH_STACK="TBD"
           CURRENT_PHASE="Phase 1 — Foundation"
           DATE=$(date +%Y-%m-%d)
@@ -65,10 +70,8 @@ jobs:
           # Swap README
           mv README.template.md README.md
 
-          # Bootstrap .agent/ from .agent.default/
-          if [ ! -d ".agent" ]; then
-            cp -r .agent.default .agent
-          fi
+          # NOTE: .agent/ is NOT created here. It is gitignored and must be
+          # created locally by each developer after cloning. See getting-started.md.
 
           # Remove this workflow (self-destruct)
           rm -f .github/workflows/bootstrap.yml
@@ -88,6 +91,7 @@ jobs:
 
           - Replaced all {{PLACEHOLDER}} values from repo metadata
           - Swapped README.template.md → README.md
-          - Bootstrapped .agent/ from .agent.default/
-          - Removed bootstrap workflow (one-time use)"
+          - Removed bootstrap workflow (one-time use)
+
+          NOTE: Run 'cp -r .agent.default .agent' locally after cloning."
           git push

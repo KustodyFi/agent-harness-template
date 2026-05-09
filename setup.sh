@@ -10,7 +10,7 @@ echo "=================================="
 echo ""
 
 # Collect project info
-read -p "Project name (e.g., FX-Town): " PROJECT_NAME
+read -p "Project name (e.g., My Project): " PROJECT_NAME
 read -p "Project description: " PROJECT_DESCRIPTION
 read -p "Tech stack (e.g., Python 3.11 · Redis · Docker): " TECH_STACK
 read -p "Current phase (e.g., Phase 1 — Foundation): " CURRENT_PHASE

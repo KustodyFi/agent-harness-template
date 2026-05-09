@@ -18,7 +18,7 @@ cp -r .agent.default .agent
 # Read AGENTS.md for the full startup sequence
 ```
 
-> **Note:** If `{{PLACEHOLDER}}` values remain in any files, run `./setup.sh` as a fallback.
+> **Note:** If any template placeholders remain in files, run `./setup.sh` as a fallback.
 
 ## Tech Stack
 
