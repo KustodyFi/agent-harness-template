@@ -29,8 +29,16 @@ dist/
 build/
 *.egg-info/
 
-# Evidence (root-level only — task evidence in .cowork/tasks/ must be tracked)
+# Evidence (root-level only)
 /evidence/
 
 # Generated files
 repomix-output.*
+
+# Internal tracking (local only — NOT pushed to repo)
+# These are your development workspace, not project deliverables.
+# All agents (Cursor, Codex) read these from local disk.
+.cowork/tasks/[0-9]*/
+.cowork/reviews/*.md
+!.cowork/reviews/README.md
+.cowork/WORKLOG.md
