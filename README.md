@@ -1,7 +1,7 @@
 # Agent Harness Template
 
-> **A production-ready framework for structured AI agent development.**
-> Every KustodyFi repository uses this template to enforce human-gated, multi-agent workflows.
+> **A structured framework for AI agent development with human-gated workflows.**
+> Every KustodyFi repository uses this template to guide multi-agent collaboration through defined stages.
 
 [![Use this template](https://img.shields.io/badge/Use%20this%20template-green?style=for-the-badge)](https://github.com/KustodyFi/agent-harness-template/generate)
 
@@ -9,7 +9,7 @@
 
 ## Why This Exists
 
-AI agents are powerful but need guardrails. Without structure, agents skip planning, hallucinate architecture, overwrite each other's work, and ship code without human review. This template solves that with a **3-layer harness** enforced by a state machine and Python validator.
+AI agents are powerful but need guardrails. Without structure, agents skip planning, hallucinate architecture, overwrite each other's work, and ship code without human review. This template solves that with a **3-layer harness** — a state machine, Python validator, and process rules that guide agent behavior. Deterministic enforcement via hooks is [planned](docs/plans/hooks-layer.md).
 
 ---
 
@@ -66,7 +66,7 @@ A GitHub Action runs automatically on first push:
 - Swaps `README.template.md` → `README.md` (your project README)
 - Self-destructs (one-time use)
 
-> **Branch protection?** Use Actions → "Run workflow" (manual dispatch) or fall back to `./setup.sh`.
+> **Branch protection?** Auto-bootstrap cannot push to protected branches. Use `./setup.sh` (manual) instead, or temporarily disable protection for the initial bootstrap.
 
 **Step 3 — Clone and set up locally:**
 
@@ -74,6 +74,7 @@ A GitHub Action runs automatically on first push:
 git clone git@github.com:KustodyFi/your-project.git
 cd your-project
 git pull                        # get the bootstrap commit
+pip install -r requirements.txt # install harness dependencies (PyYAML)
 cp -r .agent.default .agent     # create your local role copy (gitignored)
 ```
 
@@ -174,6 +175,10 @@ See `AGENTS.md` → "Startup Sequence" for the authoritative boot order.
 ## Validation
 
 ```bash
+# Install dependency (if not already done)
+pip install -r requirements.txt
+
+# Validate a task
 python3 .cowork/harness/validate_state.py .cowork/tasks/NNN_name/STATE.yaml
 ```
 

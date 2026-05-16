@@ -54,6 +54,8 @@ validated_rules:
   - coding_allowed is false until implementation stage reaches 'coding' status
   - current_stage_status must match stages[current_stage].status
   - approved stages require review_rounds >= 1, approved_by, and approved_date
+  - coding/complete stages must retain approval metadata (approved_by, approved_date, review_rounds)
+  - approved/coding/complete stages must have a review.md file in their stage folder
   - task cannot close/complete without evidence files
   - task cannot close/complete without all stages completed
 

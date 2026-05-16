@@ -1,0 +1,3 @@
+# Harness Dependencies
+# Required for the STATE.yaml validator
+pyyaml>=6.0
